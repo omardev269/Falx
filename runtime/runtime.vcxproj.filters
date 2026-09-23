@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="runtime.cpp" />
+    <ClCompile Include="src\rtdebug.cpp">
+      <Filter>core\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="src\deps.cpp">
+      <Filter>core\deps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gbtime.cpp">
+      <Filter>core\time\gb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\w32time.cpp">
+      <Filter>core\time\win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{3333e51d-53db-4e04-9c5f-216f00c9919d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\debug">
+      <UniqueIdentifier>{d878b058-48a2-4a66-8351-387e6dea74f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\time">
+      <UniqueIdentifier>{68e9b868-dd01-458a-91ed-c969added998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\deps">
+      <UniqueIdentifier>{cd381fe7-7c36-4166-abec-83220fdea550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="other">
+      <UniqueIdentifier>{ce0c2e36-510b-432a-9930-7aa14f8551f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\time\gb">
+      <UniqueIdentifier>{bb3f3413-a09b-4aba-9a12-d266db696f1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\time\win32">
+      <UniqueIdentifier>{b01824a7-2c5c-4ea2-a6fb-8957b45869b1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\runtime\enginedef.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\runtime\rtdebug.h">
+      <Filter>core\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\gb.h">
+      <Filter>other</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
