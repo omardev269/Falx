@@ -143,10 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="runtime.cpp" />
+    <ClCompile Include="entrypoint.cpp" />
     <ClCompile Include="src\deps.cpp" />
     <ClCompile Include="src\gbtime.cpp" />
     <ClCompile Include="src\rtdebug.cpp" />
+    <ClCompile Include="src\schedule.cpp" />
     <ClCompile Include="src\w32time.cpp" />
   </ItemGroup>
   <ItemGroup>
