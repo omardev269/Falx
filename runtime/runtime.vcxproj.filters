@@ -37,9 +37,6 @@
     <Filter Include="core\time\win32">
       <UniqueIdentifier>{b01824a7-2c5c-4ea2-a6fb-8957b45869b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="window">
-      <UniqueIdentifier>{8f6e1dbd-ab0c-4532-929f-fd46823470a1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\runtime\enginedef.h">
@@ -52,6 +49,9 @@
       <Filter>other</Filter>
     </ClInclude>
     <ClInclude Include="src\timeint.h">
+      <Filter>core\time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\runtime\time.h">
       <Filter>core\time</Filter>
     </ClInclude>
   </ItemGroup>

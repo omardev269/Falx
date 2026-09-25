@@ -153,6 +153,7 @@
     <ClInclude Include="..\common\gb.h" />
     <ClInclude Include="..\common\runtime\enginedef.h" />
     <ClInclude Include="..\common\runtime\rtdebug.h" />
+    <ClInclude Include="..\common\runtime\time.h" />
     <ClInclude Include="src\timeint.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
