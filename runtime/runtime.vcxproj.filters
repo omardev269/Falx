@@ -45,14 +45,14 @@
     <ClInclude Include="..\common\runtime\rtdebug.h">
       <Filter>core\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\gb.h">
-      <Filter>other</Filter>
-    </ClInclude>
     <ClInclude Include="src\timeint.h">
       <Filter>core\time</Filter>
     </ClInclude>
     <ClInclude Include="..\common\runtime\time.h">
       <Filter>core\time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\outsider\gb.h">
+      <Filter>other</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
