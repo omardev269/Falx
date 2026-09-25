@@ -25,7 +25,6 @@
 #else 
 #define FLX_INLINEFUNC
 #endif // FLX_RELEASE
-#endif // !FLX_ENGINEDEF_H
 typedef bool bit;
 typedef unsigned char uint8;
 typedef char int8;
@@ -83,3 +82,4 @@ struct matrix4x4{
 struct matrix3x3 {
 	float32 m[3][3];
 };
+#endif // !FLX_ENGINEDEF_H

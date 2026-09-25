@@ -20,6 +20,8 @@
       <Filter>mainloop</Filter>
     </ClCompile>
     <ClCompile Include="..\common\runtime\window.cpp" />
+    <ClCompile Include="src\SDL3Window.cpp" />
+    <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -49,6 +51,9 @@
     <Filter Include="core\window">
       <UniqueIdentifier>{63218be7-f708-432f-b1fd-e9bf6fc869af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\window\SDL3">
+      <UniqueIdentifier>{07b8e268-4175-4128-8445-91fde1b04910}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\runtime\enginedef.h">
@@ -72,5 +77,6 @@
     <ClInclude Include="..\common\runtime\window.h">
       <Filter>core\window</Filter>
     </ClInclude>
+    <ClInclude Include="src\SDL3Window.h" />
   </ItemGroup>
 </Project>

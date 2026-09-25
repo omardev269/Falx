@@ -143,13 +143,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\runtime\window.cpp" />
     <ClCompile Include="entrypoint.cpp" />
     <ClCompile Include="src\deps.cpp" />
     <ClCompile Include="src\gbtime.cpp" />
     <ClCompile Include="src\rtdebug.cpp" />
     <ClCompile Include="src\schedule.cpp" />
+    <ClCompile Include="src\SDL3Window.cpp" />
     <ClCompile Include="src\w32time.cpp" />
+    <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\runtime\enginedef.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="..\common\runtime\updateable.h" />
     <ClInclude Include="..\common\runtime\window.h" />
     <ClInclude Include="..\outsider\gb.h" />
+    <ClInclude Include="src\SDL3Window.h" />
     <ClInclude Include="src\timeint.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

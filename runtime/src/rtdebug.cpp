@@ -36,6 +36,7 @@ static void Fatality(const char* aProblem, const char* aTitle, uint16 aExitCode)
 #ifdef FLX_DEBUG
 void falx::AssertHelper(const char* aExpression, const char* aFile, uint32 aLine, const char* aFunc)
 {
+	DbgBreak();
 	std::string m_Message = std::format("{}\n@\n{}:{}:{}", aExpression, aFile, aFunc, aLine);
 	::Fatality(m_Message.c_str(), "Assertion FAILED", FLX_ERROR_ASSERT);
 }

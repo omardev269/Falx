@@ -5,35 +5,41 @@
 #include <timeint.h>
 #include <runtime/rtdebug.h>
 #include <runtime/time.h>
-#include <SDL3/SDL.h>
-#include <format>
+#include <runtime/window.h>
 
 namespace falx {
-	SDL_Window* g_pWindow;
+	IWindow* g_iWindow;
+}
+
+#pragma region Subsystems
+#pragma endregion
+
+static FLX_INLINEFUNC void StartSubsystems() {
+	using namespace falx;
+	InitializeTimeInt();
+	InitWindowSystem();
+}
+
+static FLX_INLINEFUNC void ShutdownSubsystems() {
+	using namespace falx;
+	ShutdownWindowSystem();
 }
 
 void FalxStart() {
 	using namespace falx;
-	InitializeTimeInt();
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-	g_pWindow = SDL_CreateWindow("AlhamdullIllah!", 800, 600, SDL_WINDOW_OPENGL);
-	FLX_SMART_CHECK(g_pWindow, "Failed to create SDL window");
+	StartSubsystems();
+	CreateWindow(g_iWindow, "AlhamdullIllah!", { 800, 600 });
+	FLX_CHECK(g_iWindow != nullptr, "Window creation failed");
 }
 bool FalxUpdate() {
 	using namespace falx;
-	{
-		SDL_Event h_Event;
-		while (SDL_PollEvent(&h_Event)) {
-			if (h_Event.type == SDL_EVENT_QUIT) {
-				return false;
-			}
-		}
-	}
+	g_iWindow->BeginFrame();
+	g_iWindow->EndFrame();
 	// false if the engine should stop
-	return true;
+	return !g_iWindow->ShouldClose();
 }
 void FalxStop() {
 	using namespace falx;
-	SDL_DestroyWindow(g_pWindow);
-	SDL_Quit();
+	delete g_iWindow;
+	ShutdownSubsystems();
 }
