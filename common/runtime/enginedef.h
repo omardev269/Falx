@@ -47,3 +47,39 @@ typedef unsigned int ulargeint;
 typedef int largeint;
 typedef float largefloat;
 #endif // FLX_X64
+struct float2 {
+	float32 x;
+	float32 y;
+};
+struct float3 {
+	float32 x;
+	float32 y;
+	float32 z;
+};
+struct float4 {
+	float32 x;
+	float32 y;
+	float32 z;
+	float32 w;
+};
+struct int2 {
+	int32 x;
+	int32 y;
+};
+struct int3 {
+	int32 x;
+	int32 y;
+	int32 z;
+};
+struct int4 {
+	int32 x;
+	int32 y;
+	int32 z;
+	int32 w;
+};
+struct matrix4x4{
+	float32 m[4][4];
+};
+struct matrix3x3 {
+	float32 m[3][3];
+};

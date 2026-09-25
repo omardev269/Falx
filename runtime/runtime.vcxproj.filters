@@ -19,6 +19,7 @@
     <ClCompile Include="src\schedule.cpp">
       <Filter>mainloop</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\runtime\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -45,6 +46,9 @@
     <Filter Include="mainloop">
       <UniqueIdentifier>{d0496716-8a25-4b0e-aaf0-d7cb4c488fc1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\window">
+      <UniqueIdentifier>{63218be7-f708-432f-b1fd-e9bf6fc869af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\runtime\enginedef.h">
@@ -61,6 +65,12 @@
     </ClInclude>
     <ClInclude Include="..\outsider\gb.h">
       <Filter>other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\runtime\updateable.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\runtime\window.h">
+      <Filter>core\window</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
