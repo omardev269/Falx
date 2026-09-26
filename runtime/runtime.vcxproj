@@ -158,6 +158,7 @@
     <ClInclude Include="..\common\runtime\time.h" />
     <ClInclude Include="..\common\runtime\updateable.h" />
     <ClInclude Include="..\common\runtime\window.h" />
+    <ClInclude Include="..\common\runtime\windowexposition.h" />
     <ClInclude Include="..\outsider\gb.h" />
     <ClInclude Include="src\SDL3Window.h" />
     <ClInclude Include="src\timeint.h" />

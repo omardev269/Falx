@@ -8,14 +8,24 @@
 #include <runtime/window.h>
 
 namespace falx {
-	IWindow* g_iWindow;
+	inline IWindow* g_iWindow;
 }
 
 #pragma region Subsystems
+// -
+
 static FLX_INLINEFUNC void InitWindowSubsystem() {
 	using namespace falx;
 	CreateWindow(g_iWindow, "AlhamdullIllah!", { 800, 600 });
 	FLX_CHECK(g_iWindow != nullptr, "Window creation failed");
+}
+static FLX_INLINEFUNC void BeginWindowFrame() {
+	using namespace falx;
+	g_iWindow->BeginFrame();
+}
+static FLX_INLINEFUNC void EndWindowFrame() {
+	using namespace falx;
+	g_iWindow->EndFrame();
 }
 static FLX_INLINEFUNC void ShutdownWindowSubsystem() {
 	using namespace falx;

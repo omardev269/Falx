@@ -19,7 +19,6 @@
     <ClCompile Include="src\schedule.cpp">
       <Filter>mainloop</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\runtime\window.cpp" />
     <ClCompile Include="src\SDL3Window.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
@@ -78,5 +77,8 @@
       <Filter>core\window</Filter>
     </ClInclude>
     <ClInclude Include="src\SDL3Window.h" />
+    <ClInclude Include="..\common\runtime\windowexposition.h">
+      <Filter>mainloop</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
