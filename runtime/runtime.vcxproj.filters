@@ -57,6 +57,9 @@
     <Filter Include="core\window\SDL3">
       <UniqueIdentifier>{07b8e268-4175-4128-8445-91fde1b04910}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mainloop\exposition">
+      <UniqueIdentifier>{6e5b9589-d1ea-4381-8781-e291eb270683}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\runtime\enginedef.h">
@@ -80,11 +83,11 @@
     <ClInclude Include="..\common\runtime\window.h">
       <Filter>core\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\runtime\windowexposition.h">
-      <Filter>mainloop</Filter>
-    </ClInclude>
     <ClInclude Include="src\SDL3Window.h">
       <Filter>core\window\SDL3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\runtime\windowexposition.h">
+      <Filter>mainloop\exposition</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
