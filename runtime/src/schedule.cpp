@@ -41,6 +41,16 @@ static FLX_INLINEFUNC void StartSubsystems() {
 	InitWindowSubsystem();
 }
 
+static FLX_INLINEFUNC void BeginSubsystemtionalFrame() {
+	using namespace falx;
+	BeginWindowFrame();
+}
+
+static FLX_INLINEFUNC void EndSubsystemtionalFrame() {
+	using namespace falx;
+	EndWindowFrame();
+}
+
 static FLX_INLINEFUNC void ShutdownSubsystems() {
 	using namespace falx;
 	ShutdownWindowSubsystem();
@@ -54,8 +64,8 @@ void FalxStart() {
 }
 bool FalxUpdate() {
 	using namespace falx;
-	g_iWindow->BeginFrame();
-	g_iWindow->EndFrame();
+	BeginSubsystemtionalFrame();
+	EndSubsystemtionalFrame();
 	// false if the engine should stop
 	return !g_iWindow->ShouldClose();
 }

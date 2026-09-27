@@ -143,8 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="entrypoint.cpp" />
     <ClCompile Include="src\deps.cpp" />
+    <ClCompile Include="src\entrypoint.cpp" />
     <ClCompile Include="src\gbtime.cpp" />
     <ClCompile Include="src\rtdebug.cpp" />
     <ClCompile Include="src\schedule.cpp" />

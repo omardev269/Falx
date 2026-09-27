@@ -13,14 +13,18 @@
     <ClCompile Include="src\w32time.cpp">
       <Filter>core\time\win32</Filter>
     </ClCompile>
-    <ClCompile Include="entrypoint.cpp">
-      <Filter>mainloop</Filter>
-    </ClCompile>
     <ClCompile Include="src\schedule.cpp">
       <Filter>mainloop</Filter>
     </ClCompile>
-    <ClCompile Include="src\SDL3Window.cpp" />
-    <ClCompile Include="src\window.cpp" />
+    <ClCompile Include="src\entrypoint.cpp">
+      <Filter>mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDL3Window.cpp">
+      <Filter>core\window\SDL3</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window.cpp">
+      <Filter>core\window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -76,9 +80,11 @@
     <ClInclude Include="..\common\runtime\window.h">
       <Filter>core\window</Filter>
     </ClInclude>
-    <ClInclude Include="src\SDL3Window.h" />
     <ClInclude Include="..\common\runtime\windowexposition.h">
       <Filter>mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SDL3Window.h">
+      <Filter>core\window\SDL3</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
