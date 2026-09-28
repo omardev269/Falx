@@ -145,6 +145,10 @@
   <ItemGroup>
     <ClCompile Include="src\device.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\graphics\device.h" />
+    <ClInclude Include="..\common\graphics\graphicsdef.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

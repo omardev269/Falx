@@ -13,4 +13,12 @@
       <Filter>core\workflow</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\graphics\device.h">
+      <Filter>core\workflow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\graphics\graphicsdef.h">
+      <Filter>core</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
