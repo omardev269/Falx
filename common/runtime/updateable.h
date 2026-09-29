@@ -5,8 +5,7 @@
 #include <runtime/enginedef.h>
 namespace falx {
 	// An interface for objects that can be updated
-	class IUpdateable {
-	public:
+	struct IUpdateable {
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
 		virtual void Dismiss() = 0;
