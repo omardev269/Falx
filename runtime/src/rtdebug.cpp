@@ -47,7 +47,7 @@ void falx::Log(const char* aMessage, const char* aFile, uint32 aLine, const char
 	OutputDebugStringA(m_Formatted.c_str());
 #else
 	printf("%s", m_Formatted.c_str());
-#endif
+#endif // FLX_WIN32
 }
 void falx::Log(std::string aMessage, const char* aFile, uint32 aLine, const char* aFunc)
 {
@@ -56,7 +56,7 @@ void falx::Log(std::string aMessage, const char* aFile, uint32 aLine, const char
 	OutputDebugStringA(m_Formatted.c_str());
 #else
 	printf("%s", aMessage.c_str());
-#endif
+#endif // FLX_WIN32
 }
 #else
 void falx::CheckHelper(const char* aFailure)

@@ -20,4 +20,4 @@ namespace falx {
 	// 
 	void CreateWindowNW(IWindow*& aWindow, const char* aTitle, int2 aWindowSize);
 }
-#endif
+#endif // !FLX_WINDOW_H

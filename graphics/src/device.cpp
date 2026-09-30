@@ -5,7 +5,7 @@
 #include <runtime/rtdebug.h>
 #ifdef FLX_TRY_D3D11
 #include <d3d11device.h>
-#endif
+#endif // FLX_TRY_D3D11
 void falx::CreateGraphicsDevice(IGraphicsDevice*& oiGraphicsDevice, bit aAllowSoftwareRendering, IWindow* aiWindow)
 {
 	FLX_SMART_CHECK(aiWindow != NULL, "Invalid window for graphics device creation");
@@ -17,7 +17,7 @@ void falx::CreateGraphicsDevice(IGraphicsDevice*& oiGraphicsDevice, bit aAllowSo
 #else
 	oiGraphicsDevice = NULL;
 	return;
-#endif
+#endif // FLX_TRY_D3D11
 }
 
 void falx::CreateGraphicsDevice(IGraphicsDevice*& oiGraphicsDevice, IWindow* aiWindow)
@@ -31,5 +31,5 @@ void falx::CreateGraphicsDevice(IGraphicsDevice*& oiGraphicsDevice, IWindow* aiW
 #else
 	oiGraphicsDevice = NULL;
 	return;
-#endif
+#endif // FLX_TRY_D3D11
 }

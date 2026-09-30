@@ -32,5 +32,5 @@ namespace falx {
 		void Dismiss() override;
 	};
 }
-#endif
-#endif
+#endif // FLX_TRY_D3D11
+#endif // !D3D11DEVICE_FLX_H
