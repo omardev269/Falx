@@ -19,10 +19,11 @@ namespace falx {
 static FLX_INLINEFUNC void InitWindowSubsystem() {
 	using namespace falx;
 	CreateWindowNW(g_iWindow, "AlhamdullIllah!", { 800, 600 });
-	FLX_CHECK(g_iWindow != nullptr, "Window creation failed");
+	FLX_SMART_CHECK(g_iWindow != nullptr, "Window creation failed");
 }
 static FLX_INLINEFUNC void InitRenderingSubsystem() {
 	using namespace falx;
+	__debugbreak();
 	CreateGraphicsDevice(g_iGdev, g_iWindow);
 }
 static FLX_INLINEFUNC void BeginWindowFrame() {
