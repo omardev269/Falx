@@ -23,7 +23,7 @@ static FLX_INLINEFUNC void InitWindowSubsystem() {
 }
 static FLX_INLINEFUNC void InitRenderingSubsystem() {
 	using namespace falx;
-	__debugbreak();
+	FLX_BREAK();
 	GetGraphicsAPI();
 	CreateGraphicsDevice(g_iGdev, g_iWindow);
 	FLX_SMART_CHECK(g_iGdev != nullptr, "Gdev creation failed");
