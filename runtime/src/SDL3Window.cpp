@@ -33,7 +33,9 @@ namespace falx {
 	}
 	void* SDL3Window::GetWindowsIdentifier()
 	{
-		return nullptr;
+
+		SDL_PropertiesID h_Props = SDL_GetWindowProperties(p_Window);
+		return SDL_GetPointerProperty(h_Props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
 	}
 	void SDL3Window::BeginFrame()
 	{

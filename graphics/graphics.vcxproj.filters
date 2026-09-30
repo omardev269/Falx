@@ -18,7 +18,9 @@
     <ClCompile Include="src\device.cpp">
       <Filter>core\workflow</Filter>
     </ClCompile>
-    <ClCompile Include="src\d3d11device.cpp" />
+    <ClCompile Include="src\d3d11device.cpp">
+      <Filter>core\workflow\direct3d11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\graphics\device.h">

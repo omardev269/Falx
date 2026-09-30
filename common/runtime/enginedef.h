@@ -46,6 +46,7 @@ typedef unsigned int ulargeint;
 typedef int largeint;
 typedef float largefloat;
 #endif // FLX_X64
+#include <stdlib.h>
 struct float2 {
 	float32 x;
 	float32 y;
@@ -82,4 +83,7 @@ struct matrix4x4{
 struct matrix3x3 {
 	float32 m[3][3];
 };
+
+#define FLX_ZMEM(x, xs) memset(x, 0, xs)
+
 #endif // !FLX_ENGINEDEF_H

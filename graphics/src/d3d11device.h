@@ -13,8 +13,14 @@ namespace falx {
 		float4 m_ClearColor;
 		ID3D11Device* i_Device;
 		ID3D11DeviceContext* i_Context;
+		// - dxgi
+		
+		IDXGIDevice* i_DxgiDevice;
 		IDXGIAdapter* i_Adapter;
+		IDXGIFactory* i_Factory;
 		IDXGISwapChain* i_SwapChain;
+		// -
+
 		uint32 m_MsaaQuality;
 		uint32 m_MsaaLevels;
 		D3D_FEATURE_LEVEL m_FeatureLevel;

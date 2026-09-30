@@ -6,9 +6,11 @@
 #include <runtime/rtdebug.h>
 #include <runtime/time.h>
 #include <runtime/window.h>
+#include <graphics/device.h>
 
 namespace falx {
 	inline IWindow* g_iWindow;
+	inline IGraphicsDevice* g_iGdev;
 }
 
 #pragma region Subsystems
@@ -16,8 +18,12 @@ namespace falx {
 
 static FLX_INLINEFUNC void InitWindowSubsystem() {
 	using namespace falx;
-	CreateWindow(g_iWindow, "AlhamdullIllah!", { 800, 600 });
+	CreateWindowNW(g_iWindow, "AlhamdullIllah!", { 800, 600 });
 	FLX_CHECK(g_iWindow != nullptr, "Window creation failed");
+}
+static FLX_INLINEFUNC void InitRenderingSubsystem() {
+	using namespace falx;
+	CreateGraphicsDevice(g_iGdev, g_iWindow);
 }
 static FLX_INLINEFUNC void BeginWindowFrame() {
 	using namespace falx;
@@ -27,10 +33,23 @@ static FLX_INLINEFUNC void EndWindowFrame() {
 	using namespace falx;
 	g_iWindow->EndFrame();
 }
+static FLX_INLINEFUNC void BeginRenderingFrame() {
+	using namespace falx;
+	g_iGdev->BeginFrame();
+}
+static FLX_INLINEFUNC void EndRenderingFrame() {
+	using namespace falx;
+	g_iGdev->EndFrame();
+}
 static FLX_INLINEFUNC void ShutdownWindowSubsystem() {
 	using namespace falx;
 	g_iWindow->Dismiss();
 	delete g_iWindow;
+}
+static FLX_INLINEFUNC void ShutdownRenderingSubsystem() {
+	using namespace falx;
+	g_iGdev->Dismiss();
+	delete g_iGdev;
 }
 #pragma endregion
 
@@ -39,21 +58,25 @@ static FLX_INLINEFUNC void StartSubsystems() {
 	InitializeTimeInt();
 	InitWindowSystem();
 	InitWindowSubsystem();
+	InitRenderingSubsystem();
 }
 
 static FLX_INLINEFUNC void BeginSubsystemtionalFrame() {
 	using namespace falx;
 	BeginWindowFrame();
+	BeginRenderingFrame();
 }
 
 static FLX_INLINEFUNC void EndSubsystemtionalFrame() {
 	using namespace falx;
+	EndRenderingFrame();
 	EndWindowFrame();
 }
 
 static FLX_INLINEFUNC void ShutdownSubsystems() {
 	using namespace falx;
 	ShutdownWindowSubsystem();
+	ShutdownRenderingSubsystem();
 	ShutdownWindowSystem();
 }
 

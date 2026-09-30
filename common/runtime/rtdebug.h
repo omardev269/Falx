@@ -3,17 +3,19 @@
 #ifndef FLX_RTDEBUG_H
 #define FLX_RTDEBUG_H
 #include <runtime/enginedef.h>
+#include <string>
 namespace falx {
 	void DbgBreak();
 	void AssertHelper(const char* aExpression, const char* aFile, uint32 aLine, const char* aFunc);
 	void CheckHelper(const char* aFailure);
-	void Log(const char* aMessage);
+	void Log(const char* aMessage, const char* aFile, uint32 aLine, const char* aFunc);
+	void Log(std::string aMessage, const char* aFile, uint32 aLine, const char* aFunc);
 	void Quit(const char* aMessage);
 	void Quit();
 }
 #ifdef FLX_DEBUG
 // Logs a message to the debug output (stdout / OutputDebugStringA) (DEBUG ONLY)
-#define FLX_LOG(aMessage) ::falx::Log(aMessage)
+#define FLX_LOG(aMessage) ::falx::Log(aMessage, __FILE__, __LINE__, __func__)
 // Breaks into the debugger if in MSVC (DEBUG ONLY)
 #define FLX_BREAK() ::falx::DbgBreak()
 #else

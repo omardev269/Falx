@@ -6,7 +6,7 @@
 namespace falx {
 	void InitWindowSystem();
 	void ShutdownWindowSystem();
-	class IWindow : IUpdateable {
+	class IWindow : public IUpdateable {
 	public:
 		// false on failure
 		virtual bool Create(const char* aTitle, int2 aWindowSize) = 0;
@@ -18,6 +18,6 @@ namespace falx {
 	// Else (for release builds) it will just NULL the pointer and return
 	// -
 	// 
-	void CreateWindow(IWindow*& aWindow, const char* aTitle, int2 aWindowSize);
+	void CreateWindowNW(IWindow*& aWindow, const char* aTitle, int2 aWindowSize);
 }
 #endif

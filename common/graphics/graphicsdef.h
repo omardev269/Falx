@@ -14,7 +14,7 @@ namespace falx {
 		GRAPHICS_API_D3D11
 	};
 	// to be filled in with the newest supported graphics API
-	enum GraphicsAPI g_GraphicsAPI;
+	inline enum GraphicsAPI g_GraphicsAPI;
 	// Only one callsite please - RAM is not a luxury currently
 	inline void GetGraphicsAPI() {
 #ifdef FLX_TRY_D3D11
