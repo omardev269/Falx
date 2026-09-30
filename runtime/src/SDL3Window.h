@@ -12,6 +12,7 @@ namespace falx {
 	public:
 		bool Create(const char* aTitle, int2 aWindowSize) override;
 		bool ShouldClose() override;
+		void* GetWindowsIdentifier() override; 
 		void BeginFrame() override;
 		void EndFrame() override;
 		void Dismiss() override;

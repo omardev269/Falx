@@ -1,0 +1,64 @@
+// BismIllahIRRahmaanIRRaheem
+/* D3D11 device implementation */
+
+#include "d3d11device.h"
+#include "rtd3d11debug.h"
+#ifdef FLX_TRY_D3D11
+bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWindow)
+{
+	{
+		m_ClearColor = { 0.4, 0.6, 1.0, 1.0 };
+		i_Device = NULL;
+		i_Context = NULL;
+		m_Warp = false;
+		m_MsaaLevels = 1;
+		m_MsaaQuality = 1;
+	}
+	
+#ifdef FLX_DEBUG
+	if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
+#else
+	if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
+#endif // FLX_DEBUG
+		FLX_LOG("Direct3D11 hardware acceleration unavailable\n");
+		m_Warp = true;
+		if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_WARP, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context)) || aAllowSoftwareRendering) {
+			FLX_LOG("Direct3D11 device creation failed\n");
+			return false;
+		}
+	}
+	FLX_LOG("Successfully created a Direct3D11 device (thankfully!)\n");
+	if (!m_Warp) {
+		if (m_FeatureLevel >= D3D_FEATURE_LEVEL_10_1){
+			m_MsaaLevels = 2;
+			FLX_SMART_CHECK_HRESULT(i_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 2, &m_MsaaQuality), "Device does not support 2x MSAA while reporting feature level >= 10_1");
+			FLX_LOG("MSAA enabled\n");
+		}
+		else {
+			FLX_LOG("MSAA disabled\n");
+		}
+	}
+	else {
+		FLX_LOG("MSAA disabled\n");
+	}
+	return true;
+}
+void falx::D3D11GraphicsDevice::BeginFrame()
+{
+
+}
+
+void falx::D3D11GraphicsDevice::EndFrame()
+{
+
+}
+
+void falx::D3D11GraphicsDevice::Dismiss()
+{
+	i_Context->Release();
+	i_Device->Release();
+}
+
+
+#endif // FLX_TRY_D3D11
+

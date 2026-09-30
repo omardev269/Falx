@@ -7,11 +7,18 @@
     <Filter Include="core\workflow">
       <UniqueIdentifier>{c69ad245-3534-45eb-aa7f-d13447f351d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\workflow\direct3d11">
+      <UniqueIdentifier>{de87e59b-1310-4bf3-92f3-608aaf329ed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\d3d11">
+      <UniqueIdentifier>{4679a8fb-ae38-40ee-9eb0-7b13369fe454}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\device.cpp">
       <Filter>core\workflow</Filter>
     </ClCompile>
+    <ClCompile Include="src\d3d11device.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\graphics\device.h">
@@ -19,6 +26,12 @@
     </ClInclude>
     <ClInclude Include="..\common\graphics\graphicsdef.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d3d11device.h">
+      <Filter>core\workflow\direct3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rtd3d11debug.h">
+      <Filter>core\d3d11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,10 +6,11 @@
 namespace falx {
 	void InitWindowSystem();
 	void ShutdownWindowSystem();
-	class IWindow : public IUpdateable {
+	class IWindow : IUpdateable {
 	public:
 		// false on failure
 		virtual bool Create(const char* aTitle, int2 aWindowSize) = 0;
+		virtual void* GetWindowsIdentifier() = 0;
 		// True if the window is to be closed
 		virtual bool ShouldClose() = 0;
 	};

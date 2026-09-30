@@ -6,7 +6,7 @@
 namespace falx {
 	void InitWindowSystem()
 	{
-		SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+		FLX_SMART_CHECK(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO), "SDL3 failed to initialize");
 	}
 	void ShutdownWindowSystem()
 	{
@@ -30,6 +30,10 @@ namespace falx {
 	bool SDL3Window::ShouldClose()
 	{
 		return m_ShouldClose;
+	}
+	void* SDL3Window::GetWindowsIdentifier()
+	{
+		return nullptr;
 	}
 	void SDL3Window::BeginFrame()
 	{
