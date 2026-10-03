@@ -56,6 +56,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_MsaaQuality = 1;
 		i_RectangleVertexBuffer = NULL;
 		i_RectangleIndexBuffer = NULL;
+		h_Window = (HWND)aiWindow->GetWindowsIdentifier();
 	}
 #ifdef FLX_DEBUG
 	if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
@@ -91,7 +92,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_SwapChainDesc.SampleDesc.Count = m_MsaaLevels;
 		m_SwapChainDesc.SampleDesc.Quality = m_MsaaQuality - 1;
-		m_SwapChainDesc.OutputWindow = (HWND)aiWindow->GetWindowsIdentifier();
+		m_SwapChainDesc.OutputWindow = h_Window;
 		m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		FLX_SMART_CHECK_HRESULT(i_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&i_DxgiDevice), "DXGI device retrieval failed");
@@ -187,14 +188,28 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 void falx::D3D11GraphicsDevice::EndFrame()
 {
 	i_Context->OMSetBlendState(i_BlendState, NULL, 0xffffffff);
+	{
+		D3D11_VIEWPORT m_Viewport;
+		FLX_ZMEM(&m_Viewport, sizeof(D3D11_VIEWPORT));
+		RECT m_WindowRect;
+		GetClientRect(h_Window, &m_WindowRect);
+		m_Viewport.Width = (float32)(m_WindowRect.right - m_WindowRect.left);
+		m_Viewport.Height = (float32)(m_WindowRect.bottom - m_WindowRect.top);
+		m_Viewport.MaxDepth = 1.0f;
+		i_Context->RSSetViewports(1, &m_Viewport);
+	}
 	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);
 	i_Context->VSSetShader(i_RectangleVertexShader, NULL, 0);
 	i_Context->PSSetShader(i_RectanglePixelShader, NULL, 0);
+	i_Context->IASetInputLayout(i_RectangleInputLayout);
 	i_Context->OMSetDepthStencilState(i_DssDisabled, 0);
 	i_Context->IASetIndexBuffer(i_RectangleIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	UINT m_Stride = sizeof(float32) * 5;
-	UINT m_Offset = 0;
-	i_Context->IASetVertexBuffers(0, 1, &i_RectangleVertexBuffer, &m_Stride, &m_Offset);
+	{
+		UINT m_Stride = sizeof(float32) * 5;
+		UINT m_Offset = 0;
+		i_Context->IASetVertexBuffers(0, 1, &i_RectangleVertexBuffer, &m_Stride, &m_Offset);
+	}
+	i_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	for (ID3D11ShaderResourceView* m_Gbuffer : i_Gbuffers) {
 		i_Context->PSSetShaderResources(0, 1, &m_Gbuffer);
 		i_Context->DrawIndexed(6, 0, 0);

@@ -51,6 +51,7 @@ namespace falx {
 		IDXGISwapChain* i_SwapChain;
 		// -
 
+		HWND h_Window;
 		uint32 m_MsaaQuality;
 		uint32 m_MsaaLevels;
 		D3D_FEATURE_LEVEL m_FeatureLevel;
