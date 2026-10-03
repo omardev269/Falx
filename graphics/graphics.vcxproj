@@ -144,15 +144,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\d3d11device.cpp" />
-    <ClCompile Include="src\d3d11rendertarget.cpp" />
     <ClCompile Include="src\device.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\graphics\device.h" />
     <ClInclude Include="..\common\graphics\graphicsdef.h" />
-    <ClInclude Include="..\common\graphics\rendertarget.h" />
     <ClInclude Include="src\d3d11device.h" />
-    <ClInclude Include="src\d3d11rendertarget.h" />
+    <ClInclude Include="src\d3d11gbuffer.h" />
     <ClInclude Include="src\rtd3d11debug.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

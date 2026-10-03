@@ -8,6 +8,8 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <d3d11.h>
+#include <d3d11gbuffer.h>
+#include <vector>
 #define FLX_RTVD3D11 ID3D11RenderTargetView
 namespace falx {
 	class D3D11GraphicsDevice : public IGraphicsDevice {
@@ -16,12 +18,29 @@ namespace falx {
 		ID3D11DeviceContext* i_Context;
 		// -
 		
-		// user overlay
-		ID3D11Texture2D* i_NormalOverlay;
+		ID3D11BlendState* i_BlendState;
 #ifdef FLX_DEBUG
 		// debug overlay (ie.. ImGui)
-		ID3D11Texture2D* i_DebugOverlay;
+		GBufferD3D11 m_DebugOverlay;
 #endif // FLX_DEBUG
+
+		// rectangle buffer
+		
+		ID3D11Buffer* i_RectangleVertexBuffer;
+		ID3D11Buffer* i_RectangleIndexBuffer;
+		ID3D11VertexShader* i_RectangleVertexShader;
+		ID3D11PixelShader* i_RectanglePixelShader;
+		ID3D11InputLayout* i_RectangleInputLayout;
+
+		//-
+		
+		std::vector<ID3D11ShaderResourceView*> i_Gbuffers;
+		// DSS States
+
+		ID3D11DepthStencilState* i_DssEnabled;
+		ID3D11DepthStencilState* i_DssDisabled;
+		// -
+		
 		// output view
 		ID3D11RenderTargetView* i_DxgiRepView;
 		// - dxgi
@@ -40,6 +59,9 @@ namespace falx {
 		bit Create(bit aAllowSoftwareRendering, IWindow* aiWindow) override;
 		void BeginFrame() override;
 		void EndFrame() override;
+		FLX_INLINEFUNC void AddGBuffer(ID3D11ShaderResourceView* aiGbuffer) { i_Gbuffers.push_back(aiGbuffer); }
+		FLX_INLINEFUNC ID3D11Device* GetDevice() { return i_Device; }
+		FLX_INLINEFUNC ID3D11DeviceContext* GetContext() { return i_Context; }
 		void Dismiss() override;
 	};
 }

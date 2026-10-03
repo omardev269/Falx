@@ -23,7 +23,13 @@ static FLX_INLINEFUNC void InitWindowSubsystem() {
 }
 static FLX_INLINEFUNC void InitRenderingSubsystem() {
 	using namespace falx;
-	FLX_BREAK();
+#ifdef FLX_WIN32
+#ifdef FLX_DEBUG
+#ifdef FLX_MSVC
+	system("pause"); // hook into renderdoc
+#endif // FLX_MSVC
+#endif // FLX_DEBUG
+#endif // FLX_WIN32
 	GetGraphicsAPI();
 	CreateGraphicsDevice(g_iGdev, g_iWindow);
 	FLX_SMART_CHECK(g_iGdev != nullptr, "Gdev creation failed");

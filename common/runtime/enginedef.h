@@ -23,7 +23,7 @@
 #define FLX_INLINEFUNC inline __attribute__((always_inline))
 #endif // FLX_MSVC
 #else 
-#define FLX_INLINEFUNC
+#define FLX_INLINEFUNC inline
 #endif // FLX_RELEASE
 typedef bool bit;
 typedef unsigned char uint8;
