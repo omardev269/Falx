@@ -16,7 +16,7 @@
     <Filter Include="core\rendertarget">
       <UniqueIdentifier>{69280fcc-9e85-4ce3-bd62-74fcd6f9e680}</UniqueIdentifier>
     </Filter>
-    <Filter Include="core\rendertarget\direct3d1">
+    <Filter Include="core\rendertarget\direct3d11">
       <UniqueIdentifier>{4c2b3643-15cf-4882-b41e-1b4c881692d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -27,7 +27,9 @@
     <ClCompile Include="src\d3d11device.cpp">
       <Filter>core\workflow\direct3d11</Filter>
     </ClCompile>
-    <ClCompile Include="src\d3d11rendertarget.cpp" />
+    <ClCompile Include="src\d3d11rendertarget.cpp">
+      <Filter>core\rendertarget\direct3d11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\graphics\device.h">
@@ -46,7 +48,7 @@
       <Filter>core\rendertarget</Filter>
     </ClInclude>
     <ClInclude Include="src\d3d11rendertarget.h">
-      <Filter>core\rendertarget\direct3d1</Filter>
+      <Filter>core\rendertarget\direct3d11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
