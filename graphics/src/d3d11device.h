@@ -8,11 +8,22 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <d3d11.h>
+#define FLX_RTVD3D11 ID3D11RenderTargetView
 namespace falx {
 	class D3D11GraphicsDevice : public IGraphicsDevice {
 		float4 m_ClearColor;
 		ID3D11Device* i_Device;
 		ID3D11DeviceContext* i_Context;
+		// -
+		
+		// user overlay
+		ID3D11Texture2D* i_NormalOverlay;
+#ifdef FLX_DEBUG
+		// debug overlay (ie.. ImGui)
+		ID3D11Texture2D* i_DebugOverlay;
+#endif // FLX_DEBUG
+		// output view
+		ID3D11RenderTargetView* i_DxgiRepView;
 		// - dxgi
 		
 		IDXGIDevice* i_DxgiDevice;

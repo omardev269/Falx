@@ -57,11 +57,18 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		FLX_SMART_CHECK_HRESULT(i_Adapter->GetParent(__uuidof(IDXGIFactory), (void**)&i_Factory), "DXGI factory retrieval failed");
 		FLX_SMART_CHECK_HRESULT(i_Factory->CreateSwapChain(i_Device, &m_SwapChainDesc, &i_SwapChain), "DXGI swapchain creation failed");
 	}
+	{
+		// create main RTV
+		ID3D11Texture2D* i_DxgiTexture;
+		FLX_SMART_CHECK_HRESULT(i_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&i_DxgiTexture), "DXGI RTO texture recieval failed");
+		FLX_SMART_CHECK_HRESULT(i_Device->CreateRenderTargetView(i_DxgiTexture, NULL, &i_DxgiRepView), "Main RTV creation failed");
+		i_DxgiTexture->Release();
+	}
 	return true;
 }
 void falx::D3D11GraphicsDevice::BeginFrame()
 {
-	
+	i_Context->ClearRenderTargetView(i_DxgiRepView, (const float32*)&m_ClearColor.x);
 }
 
 void falx::D3D11GraphicsDevice::EndFrame()
@@ -71,6 +78,7 @@ void falx::D3D11GraphicsDevice::EndFrame()
 
 void falx::D3D11GraphicsDevice::Dismiss()
 {
+	i_DxgiRepView->Release();
 	i_SwapChain->Release();
 	i_Factory->Release();
 	i_Adapter->Release();

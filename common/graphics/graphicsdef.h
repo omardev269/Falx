@@ -23,13 +23,11 @@ namespace falx {
 			g_GraphicsAPI = GRAPHICS_API_D3D11;
 			FreeLibrary(h_Module);
 		}
-		else {
-			FLX_QUIT("Device unsupported");
-		}
-#endif // FLX_TRY_D3D11
+#else
 		{
 			FLX_QUIT("Device unsupported");
 		}
+#endif // FLX_TRY_D3D11
 	}
 }
 #endif // !GRAPHICSDEF_H

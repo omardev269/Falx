@@ -77,6 +77,12 @@ struct int4 {
 	int32 z;
 	int32 w;
 };
+struct color {
+	uint8 c[4];
+};
+struct colorRGB {
+	uint8 c[3];
+};
 struct matrix4x4{
 	float32 m[4][4];
 };
