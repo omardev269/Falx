@@ -1,5 +1,5 @@
 // BismIllahIRRahmaanIRRaheem
-/* real-time d3d11-related debug support system */
+/* realtime d3d11-related debug support system */
 
 #ifndef RTD3D11DEBUG_H
 #define RTD3D11DEBUG_H

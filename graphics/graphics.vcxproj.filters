@@ -13,6 +13,9 @@
     <Filter Include="core\d3d11">
       <UniqueIdentifier>{4679a8fb-ae38-40ee-9eb0-7b13369fe454}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\scene">
+      <UniqueIdentifier>{5dce17e2-7980-4709-88f1-ff6ff047968e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\device.cpp">
@@ -37,6 +40,9 @@
     </ClInclude>
     <ClInclude Include="src\d3d11gbuffer.h">
       <Filter>core\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\graphics\scene.h">
+      <Filter>core\scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
