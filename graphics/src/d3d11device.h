@@ -14,6 +14,7 @@
 namespace falx {
 	class D3D11GraphicsDevice : public IGraphicsDevice {
 		float4 m_ClearColor;
+	public:
 		ID3D11Device* i_Device;
 		ID3D11DeviceContext* i_Context;
 		// -
@@ -24,6 +25,7 @@ namespace falx {
 		GBufferD3D11 m_DebugOverlay;
 #endif // FLX_DEBUG
 
+	private:
 		// rectangle buffer
 		
 		ID3D11Buffer* i_RectangleVertexBuffer;
@@ -40,23 +42,25 @@ namespace falx {
 		ID3D11DepthStencilState* i_DssEnabled;
 		ID3D11DepthStencilState* i_DssDisabled;
 		// -
-		
+	public:
 		// output view
 		ID3D11RenderTargetView* i_DxgiRepView;
+	private:
 		// - dxgi
 		
 		IDXGIDevice* i_DxgiDevice;
-		IDXGIAdapter* i_Adapter;
 		IDXGIFactory* i_Factory;
+	public:
+		IDXGIAdapter* i_Adapter;
 		IDXGISwapChain* i_SwapChain;
 		// -
-
+	private:
 		HWND h_Window;
+	public:
 		uint32 m_MsaaQuality;
 		uint32 m_MsaaLevels;
 		D3D_FEATURE_LEVEL m_FeatureLevel;
 		bit m_Warp;
-	public:
 		bit Create(bit aAllowSoftwareRendering, IWindow* aiWindow) override;
 		void BeginFrame() override;
 		void EndFrame() override;

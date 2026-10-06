@@ -16,6 +16,12 @@
     <Filter Include="core\scene">
       <UniqueIdentifier>{5dce17e2-7980-4709-88f1-ff6ff047968e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\scene\direct3d11">
+      <UniqueIdentifier>{c74d2531-1e25-43c8-aed3-152cd2ff07c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\freeflycamera">
+      <UniqueIdentifier>{7ef4bc3e-f89b-471a-9928-e7fb0c11ee7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\device.cpp">
@@ -23,6 +29,12 @@
     </ClCompile>
     <ClCompile Include="src\d3d11device.cpp">
       <Filter>core\workflow\direct3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d3d11scene.cpp">
+      <Filter>core\scene\direct3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene.cpp">
+      <Filter>core\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="src\d3d11gbuffer.h">
       <Filter>core\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d3d11scene.h">
+      <Filter>core\scene\direct3d11</Filter>
     </ClInclude>
     <ClInclude Include="..\common\graphics\scene.h">
       <Filter>core\scene</Filter>

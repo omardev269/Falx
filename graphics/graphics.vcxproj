@@ -144,7 +144,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\d3d11device.cpp" />
+    <ClCompile Include="src\d3d11scene.cpp" />
     <ClCompile Include="src\device.cpp" />
+    <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\graphics\device.h" />
@@ -152,6 +154,7 @@
     <ClInclude Include="..\common\graphics\scene.h" />
     <ClInclude Include="src\d3d11device.h" />
     <ClInclude Include="src\d3d11gbuffer.h" />
+    <ClInclude Include="src\d3d11scene.h" />
     <ClInclude Include="src\rtd3d11debug.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
