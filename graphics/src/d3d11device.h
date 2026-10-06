@@ -19,6 +19,7 @@ namespace falx {
 		ID3D11DeviceContext* i_Context;
 		// -
 		
+		ID3D11RasterizerState* i_RasterizerState;
 		ID3D11BlendState* i_BlendState;
 #ifdef FLX_DEBUG
 		// debug overlay (ie.. ImGui)

@@ -118,7 +118,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		m_BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		//FLX_SMART_CHECK_HRESULT(i_Device->CreateBlendState(&m_BlendDesc, &i_BlendState), "Debug overlay blend state creation failed");
+		FLX_SMART_CHECK_HRESULT(i_Device->CreateBlendState(&m_BlendDesc, &i_BlendState), "Debug overlay blend state creation failed");
 	}
 	{
 		D3D11_BUFFER_DESC m_RectangleVertexBufferDesc;
@@ -178,6 +178,14 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_RectangleInputLayoutDesc[1].AlignedByteOffset = 12;
 		FLX_SMART_CHECK_HRESULT(i_Device->CreateInputLayout(m_RectangleInputLayoutDesc, 2, g_D3D11VertexShaderBytecode, sizeof(g_D3D11VertexShaderBytecode), &i_RectangleInputLayout), "Rectangle input layout creation failed");
 	}
+	{
+		D3D11_RASTERIZER_DESC m_RasterizerDesc;
+		FLX_ZMEM(&m_RasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+		m_RasterizerDesc.CullMode = D3D11_CULL_BACK;
+		m_RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		m_RasterizerDesc.FrontCounterClockwise = TRUE;
+		FLX_SMART_CHECK_HRESULT(i_Device->CreateRasterizerState(&m_RasterizerDesc, &i_RasterizerState), "Rasterizer state creation failed");
+	}
 	return true;
 }
 void falx::D3D11GraphicsDevice::BeginFrame()
@@ -185,6 +193,7 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 	i_Context->ClearRenderTargetView(i_DxgiRepView, (const float32*)&m_ClearColor.x);
 	i_Context->OMSetBlendState(i_BlendState, NULL, 0xffffffff);
 	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);
+	i_Context->RSSetState(i_RasterizerState);
 	{
 		D3D11_VIEWPORT m_Viewport;
 		FLX_ZMEM(&m_Viewport, sizeof(D3D11_VIEWPORT));
@@ -210,6 +219,7 @@ void falx::D3D11GraphicsDevice::EndFrame()
 		m_Viewport.MaxDepth = 1.0f;
 		i_Context->RSSetViewports(1, &m_Viewport);
 	}
+	i_Context->RSSetState(i_RasterizerState);
 	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);
 	i_Context->VSSetShader(i_RectangleVertexShader, NULL, 0);
 	i_Context->PSSetShader(i_RectanglePixelShader, NULL, 0);
@@ -232,6 +242,7 @@ void falx::D3D11GraphicsDevice::EndFrame()
 
 void falx::D3D11GraphicsDevice::Dismiss()
 {
+	i_RasterizerState->Release();
 	i_RectangleInputLayout->Release();
 	i_RectanglePixelShader->Release();
 	i_RectangleVertexShader->Release();
@@ -239,7 +250,7 @@ void falx::D3D11GraphicsDevice::Dismiss()
 	i_DssEnabled->Release();
 	i_RectangleIndexBuffer->Release();
 	i_RectangleVertexBuffer->Release();
-	//i_BlendState->Release();
+	i_BlendState->Release();
 	i_DxgiRepView->Release();
 	i_SwapChain->Release();
 	i_Factory->Release();

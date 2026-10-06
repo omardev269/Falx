@@ -338,6 +338,10 @@ void falx::D3D11GraphicsScene::Dismiss()
 	m_Objects.clear();
 	i_WhiteTextureSRV->Release();
 	i_WhiteTexture->Release();
+	i_AlbedoConstantBuffer->Release();
+	i_AlbedoPixelShader->Release();
+	i_AlbedoVertexShader->Release();
+	i_InputLayout->Release();
 }
 
 #endif // FLX_TRY_D3D11
