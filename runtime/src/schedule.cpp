@@ -8,11 +8,15 @@
 #include <runtime/window.h>
 #include <graphics/device.h>
 #include <graphics/scene.h>
+#include <runtime/profiler.h>
 #include <gb_math.h>
+#include <vector>
 
 namespace falx {
 	inline IWindow* g_iWindow;
 	inline IGraphicsDevice* g_iGdev;
+	inline Profiler* g_iProfiler;
+	inline std::vector<IUpdateable*> g_IUpdateables;
 }
 
 #pragma region Subsystems
@@ -22,36 +26,21 @@ static FLX_INLINEFUNC void InitWindowSubsystem() {
 	using namespace falx;
 	CreateWindowNW(g_iWindow, "AlhamdullIllah!", { 800, 600 });
 	FLX_SMART_CHECK(g_iWindow != nullptr, "Window creation failed");
+	g_IUpdateables.push_back(g_iWindow);
 }
 static FLX_INLINEFUNC void InitRenderingSubsystem() {
 	using namespace falx;
 #ifdef FLX_WIN32
 #ifdef FLX_DEBUG
 #ifdef FLX_MSVC
-	system("pause"); // hook into renderdoc
+	system("echo Hook into RenderDoc && pause"); // hook into renderdoc
 #endif // FLX_MSVC
 #endif // FLX_DEBUG
 #endif // FLX_WIN32
 	GetGraphicsAPI();
 	CreateGraphicsDevice(g_iGdev, g_iWindow);
 	FLX_SMART_CHECK(g_iGdev != nullptr, "Gdev creation failed");
-}
-static FLX_INLINEFUNC void BeginWindowFrame() {
-	using namespace falx;
-	g_iWindow->BeginFrame();
-}
-static FLX_INLINEFUNC void EndWindowFrame() {
-	using namespace falx;
-	
-	g_iWindow->EndFrame();
-}
-static FLX_INLINEFUNC void BeginRenderingFrame() {
-	using namespace falx;
-	g_iGdev->BeginFrame();
-}
-static FLX_INLINEFUNC void EndRenderingFrame() {
-	using namespace falx;
-	g_iGdev->EndFrame();
+	g_IUpdateables.push_back(g_iGdev);
 }
 static FLX_INLINEFUNC void ShutdownWindowSubsystem() {
 	using namespace falx;
@@ -63,11 +52,24 @@ static FLX_INLINEFUNC void ShutdownRenderingSubsystem() {
 	g_iGdev->Dismiss();
 	delete g_iGdev;
 }
+static FLX_INLINEFUNC void InitProfiler() {
+	using namespace falx;
+	CreateProfiler(g_iProfiler);
+	FLX_SMART_CHECK(g_iProfiler != NULL, "Profiler creation failed");
+	g_iProfiler->Initialize();
+	g_IUpdateables.push_back(g_iProfiler);
+}
+static FLX_INLINEFUNC void ShutdownProfiler() {
+	using namespace falx;
+	g_iProfiler->Dismiss();
+	delete g_iProfiler;
+}
 #pragma endregion
 
 static FLX_INLINEFUNC void StartSubsystems() {
 	using namespace falx;
 	InitializeTimeInt();
+	InitProfiler();
 	InitWindowSystem();
 	InitWindowSubsystem();
 	InitRenderingSubsystem();
@@ -75,14 +77,16 @@ static FLX_INLINEFUNC void StartSubsystems() {
 
 static FLX_INLINEFUNC void BeginSubsystemtionalFrame() {
 	using namespace falx;
-	BeginWindowFrame();
-	BeginRenderingFrame();
+	for (size_t i = 0; i < g_IUpdateables.size(); i++) {
+		g_IUpdateables[i]->BeginFrame();
+	}
 }
 
 static FLX_INLINEFUNC void EndSubsystemtionalFrame() {
 	using namespace falx;
-	EndRenderingFrame();
-	EndWindowFrame();
+	for (size_t i = g_IUpdateables.size(); i > 0; i--) {
+		g_IUpdateables[i - 1]->EndFrame();
+	}
 }
 
 static FLX_INLINEFUNC void ShutdownSubsystems() {
@@ -90,6 +94,7 @@ static FLX_INLINEFUNC void ShutdownSubsystems() {
 	ShutdownWindowSubsystem();
 	ShutdownRenderingSubsystem();
 	ShutdownWindowSystem();
+	ShutdownProfiler();
 }
 
 falx::IGraphicsScene* i_GraphicsScene;

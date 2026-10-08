@@ -25,6 +25,9 @@
     <ClCompile Include="src\window.cpp">
       <Filter>core\window</Filter>
     </ClCompile>
+    <ClCompile Include="src\profiler.cpp">
+      <Filter>core\profiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -60,6 +63,9 @@
     <Filter Include="mainloop\exposition">
       <UniqueIdentifier>{6e5b9589-d1ea-4381-8781-e291eb270683}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\profiler">
+      <UniqueIdentifier>{3c685d67-6fd7-41b0-8432-1303967860f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\runtime\enginedef.h">
@@ -86,7 +92,10 @@
     <ClInclude Include="src\SDL3Window.h">
       <Filter>core\window\SDL3</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\runtime\windowexposition.h">
+    <ClInclude Include="..\common\runtime\profiler.h">
+      <Filter>core\profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\runtime\exposition.h">
       <Filter>mainloop\exposition</Filter>
     </ClInclude>
   </ItemGroup>
