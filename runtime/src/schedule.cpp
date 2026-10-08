@@ -8,6 +8,7 @@
 #include <runtime/window.h>
 #include <graphics/device.h>
 #include <graphics/scene.h>
+#include <graphics/freefly.h>
 #include <runtime/profiler.h>
 #include <gb_math.h>
 #include <vector>
@@ -101,9 +102,16 @@ falx::IGraphicsScene* i_GraphicsScene;
 matrix4x4 m_Mat;
 falx::ObjectID m_ObjectID;
 falx::ClumpID m_ClumpID;
+// freefly camera test layer (not a subsystem)
+falx::FreeflyCamera m_FreeflyCamera;
+largefloat m_FreeflyLastTime;
 void FalxStart() {
 	using namespace falx;
 	StartSubsystems();
+	m_FreeflyCamera.Reset();
+	m_FreeflyCamera.Teleport({ 0.0f, 0.0f, 5.0f });
+	m_FreeflyCamera.SetSpeed(1.0f);
+	m_FreeflyLastTime = GetTimeNotSinceFalxStartup();
 	gb_mat4_identity((gbMat4*)&m_Mat);
 	CreateGraphicsScene(i_GraphicsScene, g_iGdev);
 	FLX_SMART_CHECK(i_GraphicsScene != NULL, "Test graphics scene creation failed");
@@ -131,6 +139,18 @@ void FalxStart() {
 bool FalxUpdate() {
 	using namespace falx;
 	BeginSubsystemtionalFrame();
+	{
+		// test layer: scripted camera motion (no input API yet); delta time is in ms
+		//largefloat m_FreeflyDeltaMs;
+		//GetTimeBetweenAndUpdate(m_FreeflyLastTime, m_FreeflyDeltaMs);
+		//float32 m_FreeflyDelta = (float32)(m_FreeflyDeltaMs / 1000.0);
+		//m_FreeflyCamera.Rotate({ 0.0f, 0.25f * m_FreeflyDelta, 0.0f });
+		largefloat m_FreeflyDeltaMs = 0;
+		if (!g_iProfiler->IsFirstFrame()) g_iProfiler->GetDelta(m_FreeflyDeltaMs);
+		m_FreeflyCamera.Update(m_FreeflyDeltaMs, 90, 800.0f / 600.0f);
+		m_FreeflyCamera.GetMatrix(m_Mat);
+	}
+	i_GraphicsScene->UpdateClump(m_ClumpID, m_Mat);
 	i_GraphicsScene->AlbedoRender();
 	EndSubsystemtionalFrame();
 	// false if the engine should stop

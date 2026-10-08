@@ -146,10 +146,12 @@
     <ClCompile Include="src\d3d11device.cpp" />
     <ClCompile Include="src\d3d11scene.cpp" />
     <ClCompile Include="src\device.cpp" />
+    <ClCompile Include="src\freefly.cpp" />
     <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\graphics\device.h" />
+    <ClInclude Include="..\common\graphics\freefly.h" />
     <ClInclude Include="..\common\graphics\graphicsdef.h" />
     <ClInclude Include="..\common\graphics\scene.h" />
     <ClInclude Include="src\d3d11device.h" />
