@@ -109,8 +109,8 @@ void FalxStart() {
 	using namespace falx;
 	StartSubsystems();
 	m_FreeflyCamera.Reset();
-	m_FreeflyCamera.Teleport({ 0.0f, 0.0f, 5.0f });
-	m_FreeflyCamera.SetSpeed(1.0f);
+	m_FreeflyCamera.Teleport({ 0.0f, 0.0f, -5.0f });
+	m_FreeflyCamera.SetSpeed(5.0f);
 	m_FreeflyLastTime = GetTimeNotSinceFalxStartup();
 	gb_mat4_identity((gbMat4*)&m_Mat);
 	CreateGraphicsScene(i_GraphicsScene, g_iGdev);
@@ -140,13 +140,14 @@ bool FalxUpdate() {
 	using namespace falx;
 	BeginSubsystemtionalFrame();
 	{
-		// test layer: scripted camera motion (no input API yet); delta time is in ms
-		//largefloat m_FreeflyDeltaMs;
-		//GetTimeBetweenAndUpdate(m_FreeflyLastTime, m_FreeflyDeltaMs);
-		//float32 m_FreeflyDelta = (float32)(m_FreeflyDeltaMs / 1000.0);
-		//m_FreeflyCamera.Rotate({ 0.0f, 0.25f * m_FreeflyDelta, 0.0f });
+		if (g_iWindow->GetKey(Key::W)) m_FreeflyCamera.Move({ 0.0f, 0.0f, 1.0f });
+		if (g_iWindow->GetKey(Key::S)) m_FreeflyCamera.Move({ 0.0f, 0.0f, -1.0f });
+		if (g_iWindow->GetKey(Key::A)) m_FreeflyCamera.Move({ 1.0f, 0.0f, 0.0f });
+		if (g_iWindow->GetKey(Key::D)) m_FreeflyCamera.Move({ -1.0f, 0.0f, 0.0f });
 		largefloat m_FreeflyDeltaMs = 0;
 		if (!g_iProfiler->IsFirstFrame()) g_iProfiler->GetDelta(m_FreeflyDeltaMs);
+		if (g_iWindow->GetKey(Key::Up)) m_FreeflyCamera.Rotate({ -10.0f * (float32)m_FreeflyDeltaMs, 0.0f, 0.0f });
+		if (g_iWindow->GetKey(Key::Down)) m_FreeflyCamera.Rotate({ 10.0f * (float32)m_FreeflyDeltaMs, 0.0f, 0.0f });
 		m_FreeflyCamera.Update(m_FreeflyDeltaMs, 90, 800.0f / 600.0f);
 		m_FreeflyCamera.GetMatrix(m_Mat);
 	}

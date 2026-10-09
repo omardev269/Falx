@@ -10,18 +10,18 @@ namespace falx {
 		g_Initial = static_cast<largefloat>(gb_time_now());
 	}
 	largefloat GetTime() {
-		return (static_cast<largefloat>(gb_time_now()) - g_Initial) * static_cast<largefloat>(1000);
+		return (static_cast<largefloat>(gb_time_now()) - g_Initial);
 	}
 	largefloat GetTimeNotSinceFalxStartup() {
-		return static_cast<largefloat>(gb_time_now()) * static_cast<largefloat>(1000);
+		return static_cast<largefloat>(gb_time_now());
 	}
 	void GetTimeBetweenAndUpdate(largefloat& aLastTime, largefloat& aUpdateTime) {
 		largefloat m_CurrentTime = GetTimeNotSinceFalxStartup();
 		aUpdateTime = m_CurrentTime - aLastTime;
 		aLastTime = m_CurrentTime;
 	}
-	void SleepMs(uint32 aMilliseconds) {
-		largefloat m_Target = static_cast<largefloat>(gb_time_now()) + static_cast<largefloat>(aMilliseconds) / static_cast<largefloat>(1000);
+	void SleepSeconds(largefloat aSeconds) {
+		largefloat m_Target = static_cast<largefloat>(gb_time_now()) + aSeconds;
 		while (static_cast<largefloat>(gb_time_now()) <= m_Target);
 	}
 } 

@@ -64,24 +64,67 @@ namespace falx {
 				return false;
 			}
 		}
+		FLX_LOG("SDL3 window successfully created");
 		return true;
 	}
 	bool SDL3Window::ShouldClose()
 	{
 		return m_ShouldClose;
 	}
+	bool SDL3Window::GetKey(Key aKey)
+	{
+		SDL_Scancode m_Scancode = KeyToScancode(aKey);
+		if (m_Scancode == SDL_SCANCODE_UNKNOWN) {
+			return false;
+		}
+		const bit* m_Scancodes = SDL_GetKeyboardState(NULL);
+		return m_Scancodes[m_Scancode];
+	}
+
+	bool SDL3Window::GetMouseButton(MouseButton aButton)
+	{
+		int m_Button = MouseButtonToSDL(aButton);
+		if (m_Button == 0) {
+			return false;
+		}
+		return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_MASK(m_Button);
+	}
+
+	void SDL3Window::GetMouseDelta(float2& oDelta)
+	{
+		oDelta = m_MouseDelta;
+	}
+
+	void SDL3Window::GetMousePos(float2& oPos)
+	{
+		oPos = m_MousePos;
+	}
+	
 	void* SDL3Window::GetWindowsIdentifier()
 	{
-
 		SDL_PropertiesID h_Props = SDL_GetWindowProperties(p_Window);
 		return SDL_GetPointerProperty(h_Props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
 	}
 	void SDL3Window::BeginFrame()
 	{
 		SDL_Event h_Event;
+		m_MouseDelta.x = 0.0f;
+		m_MouseDelta.y = 0.0f;
 		while (SDL_PollEvent(&h_Event)) {
 			if (h_Event.type == SDL_EVENT_QUIT) {
 				m_ShouldClose = true;
+			}
+			if (h_Event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
+				m_ShouldClose = true;
+			}
+			if (h_Event.type == SDL_EVENT_MOUSE_MOTION) {
+				m_MouseDelta.x = h_Event.motion.xrel;
+				m_MouseDelta.y = h_Event.motion.yrel;
+				m_MousePos.x = h_Event.motion.x;
+				m_MousePos.y = h_Event.motion.y;
+			}
+			else {
+				SDL_GetMouseState(&m_MousePos.x, &m_MousePos.y);
 			}
 		}
 	}

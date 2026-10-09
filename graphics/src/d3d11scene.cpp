@@ -336,6 +336,7 @@ void falx::D3D11GraphicsScene::Dismiss()
 		delete p_Object;
 	}
 	m_Objects.clear();
+	
 	i_WhiteTextureSRV->Release();
 	i_WhiteTexture->Release();
 	i_AlbedoConstantBuffer->Release();
