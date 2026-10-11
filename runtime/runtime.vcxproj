@@ -170,6 +170,9 @@
     <ClInclude Include="src\timeint.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\game\game.vcxproj">
+      <Project>{80eb65d1-768e-4307-b981-273170588684}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\graphics\graphics.vcxproj">
       <Project>{d1fdd9bb-9b6c-4400-8104-1f22022e017c}</Project>
     </ProjectReference>

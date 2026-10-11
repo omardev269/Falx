@@ -6,6 +6,7 @@
 #include <runtime/enginedef.h>
 // Game Class - to be implemented by the game itself
 class Game {
+public:
     // Runs after all subsystems (ie.. windowing, graphics) start
     void Start();
     // Runs per frame

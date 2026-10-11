@@ -12,12 +12,14 @@
 #include <runtime/profiler.h>
 #include <gb_math.h>
 #include <vector>
+#include <runtime/game.h>
 
 namespace falx {
 	inline IWindow* g_iWindow;
 	inline IGraphicsDevice* g_iGdev;
 	inline Profiler* g_iProfiler;
 	inline std::vector<IUpdateable*> g_IUpdateables;
+	Game g_Game;
 }
 
 #pragma region Subsystems
@@ -101,6 +103,7 @@ static FLX_INLINEFUNC void ShutdownSubsystems() {
 void FalxStart() {
 	using namespace falx;
 	StartSubsystems();
+	g_Game.Start();
 }
 bool FalxUpdate() {
 	using namespace falx;
@@ -108,9 +111,10 @@ bool FalxUpdate() {
 	bit m_ShouldContinue = true;
 	EndSubsystemtionalFrame();
 	// false if the engine should stop
-	return m_ShouldContinue;
+	return g_Game.PerFrame();
 }
 void FalxStop() {
 	using namespace falx;
+	g_Game.Quit();
 	ShutdownSubsystems();
 }
