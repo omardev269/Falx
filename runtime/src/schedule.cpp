@@ -98,70 +98,19 @@ static FLX_INLINEFUNC void ShutdownSubsystems() {
 	ShutdownProfiler();
 }
 
-falx::IGraphicsScene* i_GraphicsScene;
-matrix4x4 m_Mat;
-falx::ObjectID m_ObjectID;
-falx::ClumpID m_ClumpID;
-// freefly camera test layer (not a subsystem)
-falx::FreeflyCamera m_FreeflyCamera;
-largefloat m_FreeflyLastTime;
 void FalxStart() {
 	using namespace falx;
 	StartSubsystems();
-	m_FreeflyCamera.Reset();
-	m_FreeflyCamera.Teleport({ 0.0f, 0.0f, -5.0f });
-	m_FreeflyCamera.SetSpeed(5.0f);
-	m_FreeflyLastTime = GetTimeNotSinceFalxStartup();
-	gb_mat4_identity((gbMat4*)&m_Mat);
-	CreateGraphicsScene(i_GraphicsScene, g_iGdev);
-	FLX_SMART_CHECK(i_GraphicsScene != NULL, "Test graphics scene creation failed");
-	m_ObjectID = i_GraphicsScene->CreateObject(60, 6, 20);
-	CLUMP_METADATA m_Metadata;
-	FLX_ZMEM(&m_Metadata, sizeof(CLUMP_METADATA));
-	m_Metadata.Parent = m_ObjectID;
-	m_Metadata.Transform = m_Mat;
-	m_Metadata.StartVertexBufferBytes = 0;
-	m_Metadata.StartIndexBufferBytes = 0;
-	m_Metadata.StartIndex = 0;
-	m_Metadata.NumVertexBufferBytes = 60;
-	m_Metadata.NumIndexBufferBytes = 6;
-	m_Metadata.NumVertices = 3;
-	m_Metadata.NumIndices = 3;
-	// -
-	float32 m_TriangleVerts[15] = {
-		0.0f, 0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 1.0f
-	};
-	uint16 m_TriangleIndices[3] = { 0, 1, 2 };
-	m_ClumpID = i_GraphicsScene->CreateClump(m_Metadata, m_TriangleVerts, m_TriangleIndices);
 }
 bool FalxUpdate() {
 	using namespace falx;
 	BeginSubsystemtionalFrame();
-	{
-		if (g_iWindow->GetKey(Key::W)) m_FreeflyCamera.Move({ 0.0f, 0.0f, 1.0f });
-		if (g_iWindow->GetKey(Key::S)) m_FreeflyCamera.Move({ 0.0f, 0.0f, -1.0f });
-		if (g_iWindow->GetKey(Key::A)) m_FreeflyCamera.Move({ 1.0f, 0.0f, 0.0f });
-		if (g_iWindow->GetKey(Key::D)) m_FreeflyCamera.Move({ -1.0f, 0.0f, 0.0f });
-		largefloat m_FreeflyDeltaMs = 0;
-		if (!g_iProfiler->IsFirstFrame()) g_iProfiler->GetDelta(m_FreeflyDeltaMs);
-		if (g_iWindow->GetKey(Key::Up)) m_FreeflyCamera.Rotate({ -10.0f * (float32)m_FreeflyDeltaMs, 0.0f, 0.0f });
-		if (g_iWindow->GetKey(Key::Down)) m_FreeflyCamera.Rotate({ 10.0f * (float32)m_FreeflyDeltaMs, 0.0f, 0.0f });
-		m_FreeflyCamera.Update(m_FreeflyDeltaMs, 90, 800.0f / 600.0f);
-		m_FreeflyCamera.GetMatrix(m_Mat);
-	}
-	i_GraphicsScene->UpdateClump(m_ClumpID, m_Mat);
-	i_GraphicsScene->AlbedoRender();
+	bit m_ShouldContinue = true;
 	EndSubsystemtionalFrame();
 	// false if the engine should stop
-	return !g_iWindow->ShouldClose();
+	return m_ShouldContinue;
 }
 void FalxStop() {
 	using namespace falx;
-	i_GraphicsScene->DismissClump(m_ClumpID);
-	i_GraphicsScene->DismissObject(m_ObjectID);
-	i_GraphicsScene->Dismiss();
-	delete i_GraphicsScene;
 	ShutdownSubsystems();
 }

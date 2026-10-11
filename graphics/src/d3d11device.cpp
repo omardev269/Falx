@@ -63,11 +63,13 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 #else
 	if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
 #endif // FLX_DEBUG
-		FLX_LOG("Direct3D11 hardware acceleration unavailable\n");
-		m_Warp = true;
-		if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_WARP, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context)) || aAllowSoftwareRendering) {
-			FLX_LOG("Direct3D11 device creation failed\n");
-			return false;
+		if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
+			FLX_LOG("Direct3D11 hardware acceleration unavailable\n");
+			m_Warp = true;
+			if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_WARP, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context)) || !aAllowSoftwareRendering) {
+				FLX_LOG("Direct3D11 device creation failed\n");
+				return false;
+			}
 		}
 	}
 	FLX_LOG("Successfully created a Direct3D11 device (thankfully!)\n");
