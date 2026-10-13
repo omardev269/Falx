@@ -224,8 +224,9 @@ void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject)
 void falx::D3D11GraphicsScene::AlbedoRender()
 {
 	for (size_t i = 0; i < m_Objects.size(); i++) {
-		if (m_Objects[i] == NULL)
+		if (m_Objects[i] == NULL) {
 			continue;
+		}
 		D3D11Object* p_Object = m_Objects[i];
 		ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
 		i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);

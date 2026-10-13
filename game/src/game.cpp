@@ -20,7 +20,7 @@ void Game::Start() {
         free(m_Brush.m_Bitmap);
     }
     falx::CreateGraphicsScene(g_iScene, falx::g_iGdev);
-    FLX_SMART_CHECK(g_iScene != nullptr, "Scene creation failed");
+    FLX_SMART_CHECK(g_iScene != NULL, "Scene creation failed");
     // camera
     g_Camera.Reset();
     g_Camera.Teleport({ 0.0f, 0.0f, -5.0f });
