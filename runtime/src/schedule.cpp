@@ -94,8 +94,8 @@ static FLX_INLINEFUNC void EndSubsystemtionalFrame() {
 
 static FLX_INLINEFUNC void ShutdownSubsystems() {
 	using namespace falx;
-	ShutdownWindowSubsystem();
 	ShutdownRenderingSubsystem();
+	ShutdownWindowSubsystem();
 	ShutdownWindowSystem();
 	ShutdownProfiler();
 }
@@ -108,10 +108,10 @@ void FalxStart() {
 bool FalxUpdate() {
 	using namespace falx;
 	BeginSubsystemtionalFrame();
-	bit m_ShouldContinue = true;
+	// false if the engine should stop; runs before the frame ends so the game can render into it
+	bit m_ShouldContinue = g_Game.PerFrame();
 	EndSubsystemtionalFrame();
-	// false if the engine should stop
-	return g_Game.PerFrame();
+	return m_ShouldContinue;
 }
 void FalxStop() {
 	using namespace falx;

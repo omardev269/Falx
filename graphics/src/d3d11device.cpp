@@ -4,6 +4,9 @@
 #include "d3d11device.h"
 #include "rtd3d11debug.h"
 #include <string>
+#ifdef FLX_ALLOW_IMGUI
+#include <backends/imgui_impl_dx11.h>
+#endif // FLX_ALLOW_IMGUI
 #ifdef FLX_TRY_D3D11
 static uint32 g_D3D11VertexShaderBytecode[] = { 1128421444, 2048115713, 4039072426, 205861471, 841364194, 1, 844, 6, 56, 252,
 472, 596, 672, 756, 963538753, 188, 188, 4294836736, 148, 40,
@@ -57,6 +60,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		i_RectangleVertexBuffer = NULL;
 		i_RectangleIndexBuffer = NULL;
 		h_Window = (HWND)aiWindow->GetWindowsIdentifier();
+		i_Window = aiWindow;
 	}
 #ifdef FLX_DEBUG
 	if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
@@ -188,10 +192,20 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_RasterizerDesc.FrontCounterClockwise = TRUE;
 		FLX_SMART_CHECK_HRESULT(i_Device->CreateRasterizerState(&m_RasterizerDesc, &i_RasterizerState), "Rasterizer state creation failed");
 	}
+#ifdef FLX_ALLOW_IMGUI
+	ImGui::SetCurrentContext(aiWindow->GetImGuiContext());
+	ImGui_ImplDX11_Init(i_Device, i_Context);
+#endif // FLX_ALLOW_IMGUI
 	return true;
 }
 void falx::D3D11GraphicsDevice::BeginFrame()
 {
+#ifdef FLX_ALLOW_IMGUI
+	ImGui::SetCurrentContext(i_Window->GetImGuiContext());
+	ImGui_ImplDX11_NewFrame();
+	i_Window->ImGuiImplStart();
+	ImGui::NewFrame();
+#endif // FLX_ALLOW_IMGUI
 	i_Context->ClearRenderTargetView(i_DxgiRepView, (const float32*)&m_ClearColor.x);
 	i_Context->OMSetBlendState(i_BlendState, NULL, 0xffffffff);
 	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);
@@ -238,12 +252,20 @@ void falx::D3D11GraphicsDevice::EndFrame()
 		i_Context->PSSetShaderResources(0, 1, &m_Gbuffer);
 		i_Context->DrawIndexed(6, 0, 0);
 	}
+#ifdef FLX_ALLOW_IMGUI
+	ImGui::Render();
+	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif // FLX_ALLOW_IMGUI
 	FLX_SMART_CHECK_HRESULT(i_SwapChain->Present(0, 0), "DXGI swapchain presentation failed");
 }
 
-
 void falx::D3D11GraphicsDevice::Dismiss()
 {
+#ifdef FLX_ALLOW_IMGUI
+	ImGui::SetCurrentContext(i_Window->GetImGuiContext());
+	ImGui_ImplDX11_Shutdown();
+#endif // FLX_ALLOW_IMGUI
 	i_RasterizerState->Release();
 	i_RectangleInputLayout->Release();
 	i_RectanglePixelShader->Release();

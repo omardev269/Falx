@@ -9,6 +9,9 @@
 #include <Windows.h>
 #define FLX_TRY_D3D11
 #endif // FLX_WIN32
+#ifdef FLX_DEBUG
+#define FLX_ALLOW_IMGUI
+#endif // FLX_DEBUG
 namespace falx {
 	enum GraphicsAPI {
 		GRAPHICS_API_D3D11
@@ -22,6 +25,9 @@ namespace falx {
 		if (h_Module) {
 			g_GraphicsAPI = GRAPHICS_API_D3D11;
 			FreeLibrary(h_Module);
+		}
+		else {
+			FLX_QUIT("Device unsupported");
 		}
 #else
 		{

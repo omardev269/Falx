@@ -4,6 +4,9 @@
 #define FLX_SDL3WINDOW_H
 #include <runtime/window.h>
 #include <SDL3/SDL.h>
+#ifdef FLX_ALLOW_IMGUI
+#include <imgui.h>
+#endif // FLX_ALLOW_IMGUI
 namespace falx {
 
 	class SDL3Window : public IWindow {
@@ -11,6 +14,9 @@ namespace falx {
 		bool m_ShouldClose;
 		float2 m_MousePos;
 		float2 m_MouseDelta;
+		#ifdef FLX_ALLOW_IMGUI
+				ImGuiContext* p_ImGuiContext;
+		#endif // FLX_ALLOW_IMGUI
 	public:
 		bool Create(const char* aTitle, int2 aWindowSize) override;
 		bool ShouldClose() override;
@@ -19,6 +25,10 @@ namespace falx {
 		void GetMouseDelta(float2& oDelta) override;
 		void GetMousePos(float2& oPos) override;
 		void* GetWindowsIdentifier() override; 
+		#ifdef FLX_ALLOW_IMGUI
+		ImGuiContext* GetImGuiContext() override;
+		void ImGuiImplStart() override;
+#endif // FLX_ALLOW_IMGUI
 		void BeginFrame() override;
 		void EndFrame() override;
 		void Dismiss() override;

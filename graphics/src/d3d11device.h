@@ -57,6 +57,7 @@ namespace falx {
 		// -
 	private:
 		HWND h_Window;
+		IWindow* i_Window;
 	public:
 		uint32 m_MsaaQuality;
 		uint32 m_MsaaLevels;

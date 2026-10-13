@@ -22,6 +22,9 @@
     <Filter Include="core\freeflycamera">
       <UniqueIdentifier>{7ef4bc3e-f89b-471a-9928-e7fb0c11ee7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\loader">
+      <UniqueIdentifier>{edac9f63-4b63-495b-90b6-f2fea4379180}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\device.cpp">
@@ -38,6 +41,9 @@
     </ClCompile>
     <ClCompile Include="src\freefly.cpp">
       <Filter>core\freeflycamera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\loader.cpp">
+      <Filter>core\loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +70,9 @@
     </ClInclude>
     <ClInclude Include="..\common\graphics\freefly.h">
       <Filter>core\freeflycamera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\graphics\loader.h">
+      <Filter>core\loader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

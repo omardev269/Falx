@@ -5,6 +5,9 @@
 #include <graphics/graphicsdef.h>
 #include <runtime/window.h>
 #include <runtime/updateable.h>
+#ifdef FLX_ALLOW_IMGUI
+#include <imgui.h>
+#endif // FLX_ALLOW_IMGUI
 namespace falx {
 	struct IGraphicsDevice : IUpdateable {
 		virtual bit Create(bit aAllowSoftwareRendering, IWindow* aiWindow) = 0;

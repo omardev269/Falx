@@ -3,6 +3,10 @@
 #ifndef FLX_WINDOW_H
 #define FLX_WINDOW_H
 #include <runtime/updateable.h>
+#include <graphics/graphicsdef.h>
+#ifdef FLX_ALLOW_IMGUI
+#include <imgui.h>
+#endif // FLX_ALLOW_IMGUI
 namespace falx {
 	void InitWindowSystem();
 	void ShutdownWindowSystem();
@@ -28,7 +32,9 @@ namespace falx {
 		// false on failure
 		virtual bool Create(const char* aTitle, int2 aWindowSize) = 0;
 		virtual void* GetWindowsIdentifier() = 0;
-
+		#ifdef FLX_ALLOW_IMGUI
+				virtual void ImGuiImplStart() = 0;
+		#endif // FLX_ALLOW_IMGUI
 		// True if the window is to be closed
 		virtual bool ShouldClose() = 0;
 		// True if the key is currently held down
@@ -39,6 +45,9 @@ namespace falx {
 		virtual void GetMouseDelta(float2& oDelta) = 0;
 		// Mouse position (in pixels) relative to the window
 		virtual void GetMousePos(float2& oPos) = 0;
+		#ifdef FLX_ALLOW_IMGUI
+				virtual ImGuiContext* GetImGuiContext() = 0;
+		#endif // FLX_ALLOW_IMGUI
 	};
 	// Throws an assert if the window creation fails for debug builds
 	// Else (for release builds) it will just NULL the pointer and return

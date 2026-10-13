@@ -1,0 +1,17 @@
+-r
+C:\Users\Omar Ismail\source\repos\Falx\runtime\Intel® VTune™ Profiler Results\runtime\r001ps
+--stack-stitching
+--data-limit-mb=1000
+--disk-space-limit=0
+--mrte-type=java,dotnet
+--itt-domains=all
+--stack-unwind-limit=8388608
+--itt-config=frame
+--stackwalk=offline
+--mrte-mode=auto
+--type=cpu:nostack
+--interval=100
+--platform-type=155
+--app-working-dir=C:\Users\Omar Ismail\source\repos\Falx\runtime\
+--
+C:\Users\Omar Ismail\source\repos\Falx\x64\Release\runtime.exe

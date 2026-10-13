@@ -3,6 +3,9 @@
 #include <SDL3Window.h>
 #include <SDL3/SDL.h>
 #include <runtime/rtdebug.h>
+#ifdef FLX_ALLOW_IMGUI
+#include <backends/imgui_impl_sdl3.h>
+#endif // FLX_ALLOW_IMGUI
 namespace falx {
 	// Converts a falx::Key to its SDL_Scancode (SDL_SCANCODE_UNKNOWN if unmapped)
 	static SDL_Scancode KeyToScancode(Key aKey)
@@ -65,6 +68,14 @@ namespace falx {
 			}
 		}
 		FLX_LOG("SDL3 window successfully created");
+		#ifdef FLX_ALLOW_IMGUI
+		IMGUI_CHECKVERSION();
+		p_ImGuiContext = ImGui::CreateContext();
+		ImGui::SetCurrentContext(p_ImGuiContext);
+		ImGuiIO& r_Io = ImGui::GetIO();
+		ImGui::StyleColorsDark();
+		ImGui_ImplSDL3_InitForD3D(p_Window);
+#endif // FLX_ALLOW_IMGUI
 		return true;
 	}
 	bool SDL3Window::ShouldClose()
@@ -80,7 +91,17 @@ namespace falx {
 		const bit* m_Scancodes = SDL_GetKeyboardState(NULL);
 		return m_Scancodes[m_Scancode];
 	}
-
+	#ifdef FLX_ALLOW_IMGUI
+	ImGuiContext* SDL3Window::GetImGuiContext()
+	{
+		return p_ImGuiContext;
+	}
+	void SDL3Window::ImGuiImplStart()
+	{
+		ImGui::SetCurrentContext(p_ImGuiContext);
+		ImGui_ImplSDL3_NewFrame();
+	}
+#endif // FLX_ALLOW_IMGUI
 	bool SDL3Window::GetMouseButton(MouseButton aButton)
 	{
 		int m_Button = MouseButtonToSDL(aButton);
@@ -110,7 +131,13 @@ namespace falx {
 		SDL_Event h_Event;
 		m_MouseDelta.x = 0.0f;
 		m_MouseDelta.y = 0.0f;
+		#ifdef FLX_ALLOW_IMGUI
+		ImGui::SetCurrentContext(p_ImGuiContext);
+#endif // FLX_ALLOW_IMGUI
 		while (SDL_PollEvent(&h_Event)) {
+#ifdef FLX_ALLOW_IMGUI
+			ImGui_ImplSDL3_ProcessEvent(&h_Event);
+#endif // FLX_ALLOW_IMGUI
 			if (h_Event.type == SDL_EVENT_QUIT) {
 				m_ShouldClose = true;
 			}
@@ -133,6 +160,11 @@ namespace falx {
 	}
 	void SDL3Window::Dismiss()
 	{
+		#ifdef FLX_ALLOW_IMGUI
+		ImGui::SetCurrentContext(p_ImGuiContext);
+		ImGui_ImplSDL3_Shutdown();
+		ImGui::DestroyContext(p_ImGuiContext);
+#endif // FLX_ALLOW_IMGUI
 		SDL_DestroyWindow(p_Window);
 	}
 }
