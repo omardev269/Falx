@@ -70,7 +70,6 @@ void Game::Start() {
             &m_Verts[m_Metadata[c].StartVertexBufferBytes / sizeof(float32)],
             &m_Indices[m_Metadata[c].StartIndex]);
     }
-    // LoadModel allocates with new[]; the data is uploaded now
     for (falx::IndividualClump& m_Clump : m_Clumps) {
         free(m_Clump.m_ModelVerts);
         free(m_Clump.m_ModelIndices);
