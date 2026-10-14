@@ -176,7 +176,6 @@ void falx::D3D11GraphicsScene::AlbedoRender(ClumpID aClump)
 	}
 	FLX_SMART_CHECK(aClump.ID != NULL && aClump.ID <= p_Object->m_Clumps.size(), "Invalid clump referenced in graphics scene");
 	const ClearClumpD3D11& r_ClClump = p_Object->m_Clumps[aClump.ID - 1];
-	FLX_SMART_CHECK(aClump.ID == 0, "Invalid clump referenced as an argument to AlbedoRender");
 	ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
 	i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);
 	i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
@@ -261,14 +260,13 @@ static falx::ClearClumpD3D11* GetClump(std::vector<falx::D3D11Object*>& aObjects
 	return p_Clump;
 }
 
-static void UploadBytes(ID3D11DeviceContext* aiContext, ID3D11Buffer* aiBuffer, ulargeint aOffset, ulargeint aBytes, const void* apData)
+static FLX_INLINEFUNC void UploadBytes(ID3D11DeviceContext* aiContext, ID3D11Buffer* aiBuffer, ulargeint aOffset, ulargeint aBytes, const void* apData)
 {
 	D3D11_BOX m_Box;
+	FLX_ZMEM(&m_Box, sizeof(D3D11_BOX));
 	m_Box.left = (UINT)aOffset;
 	m_Box.right = (UINT)(aOffset + aBytes);
-	m_Box.top = 0;
 	m_Box.bottom = 1;
-	m_Box.front = 0;
 	m_Box.back = 1;
 	aiContext->UpdateSubresource(aiBuffer, 0, &m_Box, apData, 0, 0);
 }
@@ -281,10 +279,12 @@ falx::ClumpID falx::D3D11GraphicsScene::CreateClump(CLUMP_METADATA aMetadata, fl
 	FLX_SMART_CHECK(aMetadata.StartVertexBufferBytes + aMetadata.NumVertexBufferBytes <= p_Object->m_VertexBufferBytes, "Clump vertex data exceeds parent object vertex buffer");
 	FLX_SMART_CHECK(aMetadata.StartIndexBufferBytes + aMetadata.NumIndexBufferBytes <= p_Object->m_IndexBufferBytes, "Clump index data exceeds parent object index buffer");
 	ID3D11DeviceContext* i_Context = i_GraphicsDevice->GetContext();
-	if (apVertexStartData != NULL && aMetadata.NumVertexBufferBytes > 0)
+	if (apVertexStartData != NULL && aMetadata.NumVertexBufferBytes > 0) {
 		UploadBytes(i_Context, p_Object->i_VertexBuffer, aMetadata.StartVertexBufferBytes, aMetadata.NumVertexBufferBytes, apVertexStartData);
-	if (apIndexStartData != NULL && aMetadata.NumIndexBufferBytes > 0)
+	}
+	if (apIndexStartData != NULL && aMetadata.NumIndexBufferBytes > 0) {
 		UploadBytes(i_Context, p_Object->i_IndexBuffer, aMetadata.StartIndexBufferBytes, aMetadata.NumIndexBufferBytes, apIndexStartData);
+	}
 	ClearClumpD3D11 m_Clump;
 	m_Clump.Metadata = aMetadata;
 	p_Object->m_Clumps.push_back(m_Clump);

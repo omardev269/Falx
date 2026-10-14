@@ -13,12 +13,9 @@
 #include <gb_math.h>
 #include <vector>
 #include <runtime/game.h>
+#include <runtime/exposition.h>
 
 namespace falx {
-	inline IWindow* g_iWindow;
-	inline IGraphicsDevice* g_iGdev;
-	inline Profiler* g_iProfiler;
-	inline std::vector<IUpdateable*> g_IUpdateables;
 	Game g_Game;
 }
 

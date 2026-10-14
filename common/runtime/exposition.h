@@ -4,10 +4,12 @@
 #define FLX_WINDOWEXPOSITION_H
 #include <runtime/window.h>
 #include <graphics/device.h>
+#include <runtime/profiler.h>
 #include <vector>
 namespace falx {
 	inline IWindow* g_iWindow;
 	inline IGraphicsDevice* g_iGdev;
+	inline Profiler* g_iProfiler;
 	inline std::vector<IUpdateable*> g_IUpdateables;
 }
 #endif // !FLX_WINDOWEXPOSITION_H
