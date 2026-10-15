@@ -211,7 +211,6 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);
 	i_Context->RSSetState(i_RasterizerState);
 	{
-		D3D11_VIEWPORT m_Viewport;
 		FLX_ZMEM(&m_Viewport, sizeof(D3D11_VIEWPORT));
 		RECT m_WindowRect;
 		GetClientRect(h_Window, &m_WindowRect);
@@ -252,6 +251,7 @@ void falx::D3D11GraphicsDevice::EndFrame()
 		i_Context->PSSetShaderResources(0, 1, &m_Gbuffer);
 		i_Context->DrawIndexed(6, 0, 0);
 	}
+	i_Gbuffers.clear();
 #ifdef FLX_ALLOW_IMGUI
 	ImGui::Render();
 	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);

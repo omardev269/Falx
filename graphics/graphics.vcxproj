@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\d3d11albedopipeline.cpp" />
     <ClCompile Include="src\d3d11device.cpp" />
     <ClCompile Include="src\d3d11scene.cpp" />
     <ClCompile Include="src\device.cpp" />
@@ -151,11 +152,14 @@
     <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\graphics\corepipeline.h" />
     <ClInclude Include="..\common\graphics\device.h" />
     <ClInclude Include="..\common\graphics\freefly.h" />
     <ClInclude Include="..\common\graphics\graphicsdef.h" />
     <ClInclude Include="..\common\graphics\loader.h" />
     <ClInclude Include="..\common\graphics\scene.h" />
+    <ClInclude Include="src\d3d11albedopipeline.h" />
+    <ClInclude Include="src\d3d11corepipeline.h" />
     <ClInclude Include="src\d3d11device.h" />
     <ClInclude Include="src\d3d11gbuffer.h" />
     <ClInclude Include="src\d3d11scene.h" />

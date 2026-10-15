@@ -25,6 +25,18 @@
     <Filter Include="core\loader">
       <UniqueIdentifier>{edac9f63-4b63-495b-90b6-f2fea4379180}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pipeline">
+      <UniqueIdentifier>{a406bd9c-fc3a-4a58-a487-ea1b330b67e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline\core">
+      <UniqueIdentifier>{bc401c5a-956b-4b58-a3d0-ce9606bd4b89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline\core\d3d11">
+      <UniqueIdentifier>{36c82b74-5586-4d60-a951-2a0f6be2b457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline\core\d3d11\albedo">
+      <UniqueIdentifier>{1561f61f-0e3b-4155-8d63-d817d9702051}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\device.cpp">
@@ -44,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="src\loader.cpp">
       <Filter>core\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d3d11albedopipeline.cpp">
+      <Filter>pipeline\core\d3d11\albedo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +88,15 @@
     </ClInclude>
     <ClInclude Include="..\common\graphics\loader.h">
       <Filter>core\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\graphics\corepipeline.h">
+      <Filter>pipeline\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d3d11corepipeline.h">
+      <Filter>pipeline\core\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d3d11albedopipeline.h">
+      <Filter>pipeline\core\d3d11\albedo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

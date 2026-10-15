@@ -47,6 +47,7 @@ typedef int largeint;
 typedef float largefloat;
 #endif // FLX_X64
 #include <stdlib.h>
+#include <functional>
 struct float2 {
 	float32 x;
 	float32 y;

@@ -25,7 +25,7 @@ namespace falx {
 		// debug overlay (ie.. ImGui)
 		GBufferD3D11 m_DebugOverlay;
 #endif // FLX_DEBUG
-
+		D3D11_VIEWPORT m_Viewport;
 	private:
 		// rectangle buffer
 		
