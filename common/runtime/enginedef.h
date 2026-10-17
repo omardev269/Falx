@@ -78,6 +78,21 @@ struct int4 {
 	int32 z;
 	int32 w;
 };
+struct uint2 {
+	uint32 x;
+	uint32 y;
+};
+struct uint3 {
+	uint32 x;
+	uint32 y;
+	uint32 z;
+};
+struct uint4 {
+	uint32 x;
+	uint32 y;
+	uint32 z;
+	uint32 w;
+};
 struct color {
 	uint8 c[4];
 };

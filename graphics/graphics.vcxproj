@@ -145,10 +145,12 @@
   <ItemGroup>
     <ClCompile Include="src\d3d11albedopipeline.cpp" />
     <ClCompile Include="src\d3d11device.cpp" />
+    <ClCompile Include="src\d3d11material.cpp" />
     <ClCompile Include="src\d3d11scene.cpp" />
     <ClCompile Include="src\device.cpp" />
     <ClCompile Include="src\freefly.cpp" />
     <ClCompile Include="src\loader.cpp" />
+    <ClCompile Include="src\material.cpp" />
     <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,11 +159,13 @@
     <ClInclude Include="..\common\graphics\freefly.h" />
     <ClInclude Include="..\common\graphics\graphicsdef.h" />
     <ClInclude Include="..\common\graphics\loader.h" />
+    <ClInclude Include="..\common\graphics\material.h" />
     <ClInclude Include="..\common\graphics\scene.h" />
     <ClInclude Include="src\d3d11albedopipeline.h" />
     <ClInclude Include="src\d3d11corepipeline.h" />
     <ClInclude Include="src\d3d11device.h" />
     <ClInclude Include="src\d3d11gbuffer.h" />
+    <ClInclude Include="src\d3d11material.h" />
     <ClInclude Include="src\d3d11scene.h" />
     <ClInclude Include="src\rtd3d11debug.h" />
   </ItemGroup>
