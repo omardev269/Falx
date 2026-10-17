@@ -33,6 +33,7 @@ namespace falx
         ObjectID CreateObject(ulargeint aVertexBufferBytes, ulargeint aIndexBufferBytes, uint32 aStride) override;
         ClumpID CreateClump(CLUMP_METADATA aMetadata, float32* apVertexStartData, uint16* apIndexStartData) override;
         void UpdateClump(ClumpID aClump, matrix4x4 aTransform) override;
+        void UpdateClump(ClumpID aClump, IMaterial* aiMaterial) override;
         void UpdateClumpNumVertices(ClumpID aClump, uint16 aNumVertices) override;
         void UpdateClumpNumIndices(ClumpID aClump, uint32 aNumIndices) override;
         void UpdateClump(ClumpID aClump, float32* apVertexData, ulargeint aCurrentAttemptedAllocationSize) override;

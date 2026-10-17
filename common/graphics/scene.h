@@ -3,6 +3,7 @@
 #ifndef GRAPHICS_SCENE_H
 #define GRAPHICS_SCENE_H
 #include <graphics/device.h>
+#include <graphics/material.h>
 namespace falx
 {
 	struct ObjectID {
@@ -22,12 +23,14 @@ namespace falx
 		ulargeint NumIndexBufferBytes;
 		uint16 NumVertices;
 		uint32 NumIndices;
+		IMaterial* iMaterial; // can be NULL, if NULL the object will be white, if not NULL the object will be rendered with the material
 	};
 	struct IGraphicsScene {
 		virtual bit Create(IGraphicsDevice* aiGraphicsDevice) = 0;
 		virtual ObjectID CreateObject(ulargeint aVertexBufferBytes, ulargeint aIndexBufferBytes, uint32 aStride) = 0;
 		virtual ClumpID CreateClump(CLUMP_METADATA aMetadata, float32* apVertexStartData, uint16* apIndexStartData) = 0;
 		virtual void UpdateClump(ClumpID aClump, matrix4x4 aTransform) = 0;
+		virtual void UpdateClump(ClumpID aClump, IMaterial* aiMaterial) = 0;
 		virtual void UpdateClumpNumVertices(ClumpID aClump, uint16 aNumVertices) = 0;
 		virtual void UpdateClumpNumIndices(ClumpID aClump, uint32 aNumIndices) = 0;
 		virtual void UpdateClump(ClumpID aClump, float32* apVertexData, ulargeint aCurrentAttemptedAllocationSize) = 0;

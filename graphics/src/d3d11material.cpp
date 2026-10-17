@@ -57,10 +57,15 @@ bit falx::D3D11Material::Create(MATERIAL_DESC& aDesc, SamplerMode aSamplerMode, 
 		m_TextureDesc.ArraySize = 1;
 		m_TextureDesc.SampleDesc.Count = 1;
 		m_TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		D3D11_SUBRESOURCE_DATA m_SubresourceData;
-		FLX_ZMEM(&m_SubresourceData, sizeof(m_SubresourceData));
-		m_SubresourceData.pSysMem = aDesc.BitmapData;
-		FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
+		if (aDesc.BitmapData == NULL) { // sometimes this is useful
+			FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, NULL, &i_Texture), "Failed to create texture");
+		}
+		else {
+			D3D11_SUBRESOURCE_DATA m_SubresourceData;
+			FLX_ZMEM(&m_SubresourceData, sizeof(m_SubresourceData));
+			m_SubresourceData.pSysMem = aDesc.BitmapData;
+			FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
+		}
 	}
 	{
 		FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateShaderResourceView(i_Texture, NULL, &i_TextureView), "Failed to create shader resource view");
@@ -118,7 +123,7 @@ bit falx::D3D11Material::Reset(SamplerMode aSamplerMode)
 			m_SamplerDesc.MaxAnisotropy = 2;
 		}
 		else {
-			m_SamplerDesc.MaxAnisotropy = (uint32)aSamplerMode;
+			m_SamplerDesc.MaxAnisotropy = static_cast<uint32>(aSamplerMode);
 		}
 	}
 	m_SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -127,7 +132,7 @@ bit falx::D3D11Material::Reset(SamplerMode aSamplerMode)
 	return true;
 }
 
-void falx::D3D11Material::SoftChangeBitmap(uint8* apBitmapData)
+void falx::D3D11Material::SoftChangeBitmap(uint8* apBitmapData) // note this can be color* x with a cast
 {
 	D3D11_BOX m_CoverBox;
 	FLX_ZMEM(&m_CoverBox, sizeof(m_CoverBox));
@@ -135,6 +140,11 @@ void falx::D3D11Material::SoftChangeBitmap(uint8* apBitmapData)
 	m_CoverBox.right = m_BitmapSize.x;
 	m_CoverBox.back = 1;
 	i_GraphicsDevice->i_Context->UpdateSubresource(i_Texture, 0, &m_CoverBox, apBitmapData, 4 * i_GraphicsDevice->m_Viewport.Width, 0);
+}
+
+void falx::D3D11Material::GetBitmapSize(uint2& oBitmapSize)
+{
+	oBitmapSize = m_BitmapSize;
 }
 
 void falx::D3D11Material::Dismiss()

@@ -68,7 +68,7 @@ bit Game::PerFrame() {
 				m_Verts.reserve(static_cast<size_t>(m_TotalVerts) * c_SceneFloats);
 				m_Indices.reserve(m_TotalIndices);
 				std::vector<falx::CLUMP_METADATA> m_Metadata;
-			matrix4x4 m_Transform;
+				matrix4x4 m_Transform;
 				g_Camera.GetMatrix(m_Transform);
 				for (const falx::IndividualClump& m_Clump : m_Clumps) {
 					falx::CLUMP_METADATA m_Meta = {};

@@ -11,6 +11,9 @@
 #endif // FLX_WIN32
 #ifdef FLX_DEBUG
 #define FLX_ALLOW_IMGUI
+#else
+// -RELEDIT
+#define FLX_ALLOW_IMGUI
 #endif // FLX_DEBUG
 namespace falx {
 	enum GraphicsAPI {

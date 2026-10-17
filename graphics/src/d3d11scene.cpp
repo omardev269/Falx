@@ -5,6 +5,7 @@
 #ifdef FLX_TRY_D3D11
 #include <d3d11scene.h>
 #include <rtd3d11debug.h>
+#include <d3d11material.h>
 
 static uint32 g_VertexShaderBytecodeAlbedo[] = { 1128421444u, 2402879077u, 4141149369u, 3236055827u, 3179830628u, 1u, 1820u, 6u, 56u, 584u,
 1316u, 1440u, 1648u, 1732u, 963538753u, 520u, 520u, 4294836736u, 468u, 52u,
@@ -229,7 +230,6 @@ void falx::D3D11GraphicsScene::AlbedoRender()
 		D3D11Object* p_Object = m_Objects[i];
 		ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
 		i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);
-		i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
 		i_ImmediateContext->VSSetShader(i_AlbedoVertexShader, NULL, 0);
 		i_ImmediateContext->VSSetConstantBuffers(0, 1, &i_AlbedoConstantBuffer);
 		i_ImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -242,6 +242,14 @@ void falx::D3D11GraphicsScene::AlbedoRender()
 		}
 		for (const ClearClumpD3D11& r_ClClump : p_Object->m_Clumps) {
 			i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &r_ClClump.Metadata.Transform, 0, 0);
+			if (r_ClClump.Metadata.iMaterial == NULL) {
+				i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
+			}
+			else {
+				i_ImmediateContext->PSSetShaderResources(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
+				i_ImmediateContext->PSSetSamplers(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
+
+			}
 			if (r_ClClump.Metadata.Parent.ID == NULL)
 				continue;
 			i_ImmediateContext->DrawIndexed(r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
@@ -294,6 +302,11 @@ falx::ClumpID falx::D3D11GraphicsScene::CreateClump(CLUMP_METADATA aMetadata, fl
 void falx::D3D11GraphicsScene::UpdateClump(ClumpID aClump, matrix4x4 aTransform)
 {
 	GetClump(m_Objects, aClump)->Metadata.Transform = aTransform;
+}
+
+void falx::D3D11GraphicsScene::UpdateClump(ClumpID aClump, IMaterial* aiMaterial)
+{
+	GetClump(m_Objects, aClump)->Metadata.iMaterial = aiMaterial;
 }
 
 void falx::D3D11GraphicsScene::UpdateClumpNumVertices(ClumpID aClump, uint16 aNumVertices)

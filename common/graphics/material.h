@@ -27,6 +27,7 @@ namespace falx {
 		virtual bit Reset(MATERIAL_DESC& aDesc) = 0;
 		virtual bit Reset(SamplerMode aSamplerMode) = 0;
 		virtual void SoftChangeBitmap(uint8* apBitmapData) = 0;
+		virtual void GetBitmapSize(uint2& oBitmapSize) = 0;
 		virtual void Dismiss() = 0;
 	};
 
