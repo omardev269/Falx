@@ -11,6 +11,7 @@ namespace falx {
 		ID3D11Texture2D* i_Texture;
 		ID3D11ShaderResourceView* i_TextureView;
 		ID3D11SamplerState* i_SamplerState;
+		uint2 m_BitmapSize;
 	public:
 		bit Create(MATERIAL_DESC& aDesc, SamplerMode aSamplerMode, IGraphicsDevice* aiGraphicsDevice) override;
 		bit Reset(MATERIAL_DESC& aDesc) override;
