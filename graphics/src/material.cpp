@@ -14,9 +14,9 @@ void falx::CreateMaterial(IMaterial*& aoMaterial, MATERIAL_DESC& aDesc, SamplerM
     aoMaterial = new D3D11Material;
     if (aoMaterial->Create(aDesc, aSamplerMode, aiGraphicsDevice)) return;
     delete aoMaterial;
-    aoMaterial = NULL;
+    aoMaterial = nullptr;
 #else
-    aoMaterial = NULL;
+    aoMaterial = nullptr;
     return;
 #endif // FLX_TRY_D3D11
 }

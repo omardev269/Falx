@@ -179,7 +179,13 @@ void falx::D3D11GraphicsScene::AlbedoRender(ClumpID aClump)
 	const ClearClumpD3D11& r_ClClump = p_Object->m_Clumps[aClump.ID - 1];
 	ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
 	i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);
-	i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
+	if (r_ClClump.Metadata.iMaterial == NULL) {
+		i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
+	}
+	else {
+		i_ImmediateContext->PSSetShaderResources(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
+		i_ImmediateContext->PSSetSamplers(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
+	}
 	i_ImmediateContext->VSSetShader(i_AlbedoVertexShader, NULL, 0);
 	i_ImmediateContext->VSSetConstantBuffers(0, 1, &i_AlbedoConstantBuffer);
 	i_ImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -202,7 +208,6 @@ void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject)
 	FLX_SMART_CHECK(p_Object != NULL, "Object referenced in graphics scene was already dismissed - CSDISM");
 	ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
 	i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);
-	i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
 	i_ImmediateContext->VSSetShader(i_AlbedoVertexShader, NULL, 0);
 	i_ImmediateContext->VSSetConstantBuffers(0, 1, &i_AlbedoConstantBuffer);
 	i_ImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -214,9 +219,17 @@ void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject)
 		i_ImmediateContext->IASetVertexBuffers(0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
 	}
 	for (const ClearClumpD3D11& r_ClClump : p_Object->m_Clumps) {
-		i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &r_ClClump.Metadata.Transform, 0, 0);
-		if (r_ClClump.Metadata.Parent.ID == NULL)
+		if (r_ClClump.Metadata.Parent.ID == NULL) {
 			continue;
+		}
+		i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &r_ClClump.Metadata.Transform, 0, 0);
+		if (r_ClClump.Metadata.iMaterial == NULL) {
+			i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
+		}
+		else {
+			i_ImmediateContext->PSSetShaderResources(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
+			i_ImmediateContext->PSSetSamplers(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
+		}
 		i_ImmediateContext->DrawIndexed(r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
 	}
 }
@@ -241,6 +254,9 @@ void falx::D3D11GraphicsScene::AlbedoRender()
 			i_ImmediateContext->IASetVertexBuffers(0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
 		}
 		for (const ClearClumpD3D11& r_ClClump : p_Object->m_Clumps) {
+			if (r_ClClump.Metadata.Parent.ID == NULL) {
+				continue;
+			}
 			i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &r_ClClump.Metadata.Transform, 0, 0);
 			if (r_ClClump.Metadata.iMaterial == NULL) {
 				i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
@@ -248,10 +264,7 @@ void falx::D3D11GraphicsScene::AlbedoRender()
 			else {
 				i_ImmediateContext->PSSetShaderResources(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
 				i_ImmediateContext->PSSetSamplers(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
-
 			}
-			if (r_ClClump.Metadata.Parent.ID == NULL)
-				continue;
 			i_ImmediateContext->DrawIndexed(r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
 		}
 	}

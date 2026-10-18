@@ -16,11 +16,12 @@ static falx::ObjectID g_ModelObject = {};
 static bit g_HasModel = false;
 uint32 g_NumClumps = 0;
 std::vector<falx::ClumpID> g_Clumps;
+std::vector<falx::IMaterial*> g_Materials;
 uint32 g_WantedClump = 0;
 char* g_FilePath;
 void Game::Start() {
 	g_FilePath = (char*)malloc(260);
-   FLX_SMART_CHECK(g_FilePath != NULL, "File path allocation failed");
+	FLX_SMART_CHECK(g_FilePath != NULL, "File path allocation failed");
 	g_FilePath[0] = '\0';
 	falx::CreateGraphicsScene(g_iScene, falx::g_iGdev);
 	FLX_SMART_CHECK(g_iScene != NULL, "Scene creation failed");
@@ -30,6 +31,7 @@ void Game::Start() {
 }
 
 bit g_ShouldOpenSelector = false;
+bit g_ShouldAllDraw = true;
 bit Game::PerFrame() {
 	bit m_Return = !falx::g_iWindow->ShouldClose();
 	if (ImGui::BeginMainMenuBar()) {
@@ -47,11 +49,35 @@ bit Game::PerFrame() {
 	if (g_ShouldOpenSelector) {
 		ImGui::Begin("Open File", &g_ShouldOpenSelector, ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::InputText("File Path", g_FilePath, 260);
-      if (ImGui::Button("Load") && g_FilePath[0] != '\0') {
+	  if (ImGui::Button("Load") && g_FilePath[0] != '\0') {
+			if (g_HasModel) {
+				for (falx::ClumpID& m_Clump : g_Clumps) {
+					g_iScene->DismissClump(m_Clump);
+				}
+				g_iScene->DismissObject(g_ModelObject);
+				for (falx::IMaterial* m_Material : g_Materials) {
+					if (m_Material == NULL) continue;
+					m_Material->Dismiss();
+					delete m_Material;
+				}
+				g_Materials.clear();
+				g_Clumps.clear();
+				g_NumClumps = 0;
+				g_WantedClump = 0;
+				g_HasModel = false;
+			}
 			std::vector<falx::IndividualClump> m_Clumps;
 			std::vector<falx::Brush> m_Brushes;
 			falx::LoadModel(g_FilePath, m_Clumps, m_Brushes);
+			std::vector<falx::IMaterial*> m_Materials;
 			for (falx::Brush& m_Brush : m_Brushes) {
+				falx::MATERIAL_DESC m_Desc = {};
+				m_Desc.BitmapData = reinterpret_cast<uint8*>(m_Brush.m_Bitmap);
+				m_Desc.BitmapSize.x = m_Brush.m_Width;
+				m_Desc.BitmapSize.y = m_Brush.m_Height;
+				falx::IMaterial* m_Material = NULL;
+				falx::CreateMaterial(m_Material, m_Desc, falx::SAMPLER_MODE_LINEAR, falx::g_iGdev);
+				m_Materials.push_back(m_Material);
 				free(m_Brush.m_Bitmap);
 			}
 			uint32 m_TotalVerts = 0;
@@ -70,6 +96,7 @@ bit Game::PerFrame() {
 				std::vector<falx::CLUMP_METADATA> m_Metadata;
 				matrix4x4 m_Transform;
 				g_Camera.GetMatrix(m_Transform);
+				uint32 m_ClumpIndicator = 0;
 				for (const falx::IndividualClump& m_Clump : m_Clumps) {
 					falx::CLUMP_METADATA m_Meta = {};
 					m_Meta.Transform = m_Transform;
@@ -90,6 +117,12 @@ bit Game::PerFrame() {
 						m_Indices.push_back(static_cast<uint16>(m_VertexBase + m_Clump.m_ModelIndices[i]));
 					}
 					m_Metadata.push_back(m_Meta);
+					m_ClumpIndicator++;
+				}
+				for (size_t b = 0; b < m_Brushes.size(); b++) {
+					for (uint32 m_Address : m_Brushes[b].m_ClumpAddresses) {
+						m_Metadata[m_Address].iMaterial = m_Materials[b];
+					}
 				}
 				falx::ObjectID m_NewObject = g_iScene->CreateObject(m_Verts.size() * sizeof(float32), m_Indices.size() * sizeof(uint16), c_SceneFloats * sizeof(float32));
 				std::vector<falx::ClumpID> m_NewClumps;
@@ -99,27 +132,26 @@ bit Game::PerFrame() {
 						&m_Verts[m_Metadata[c].StartVertexBufferBytes / sizeof(float32)],
 						&m_Indices[m_Metadata[c].StartIndex]));
 				}
-				if (g_HasModel) {
-					g_iScene->DismissObject(g_ModelObject);
-				}
 				g_ModelObject = m_NewObject;
 				g_Clumps.swap(m_NewClumps);
+				g_Materials.swap(m_Materials);
 				g_NumClumps = static_cast<uint32>(g_Clumps.size());
 				g_WantedClump = 0;
 				g_HasModel = true;
 				g_ShouldOpenSelector = false;
 			}
-			for (falx::IndividualClump& m_Clump : m_Clumps) {
-				free(m_Clump.m_ModelVerts);
-				free(m_Clump.m_ModelIndices);
-			}
 		}
 		ImGui::End();
 	}
 #ifdef FLX_ALLOW_IMGUI
-    if (g_HasModel) {
+	if (g_HasModel) {
 		ImGui::Begin("AlhamdullIllah!");
-		ImGui::SliderInt("Select Clump", reinterpret_cast<int*>(&g_WantedClump), 0, static_cast<int>(g_NumClumps) - 1);
+		if (ImGui::Button("Toggle All Draw")) {
+			g_ShouldAllDraw = !g_ShouldAllDraw;
+		}
+		if (!g_ShouldAllDraw) {
+			ImGui::SliderInt("Select Clump", reinterpret_cast<int*>(&g_WantedClump), 0, static_cast<int>(g_NumClumps) - 1);
+		}
 		ImGui::End();
 	}
 #endif // FLX_ALLOW_IMGUI
@@ -142,16 +174,30 @@ bit Game::PerFrame() {
 	g_Camera.Update(m_DeltaTime, 60, 800.0f / 600.0f);
 	matrix4x4 m_Transform;
 	g_Camera.GetMatrix(m_Transform);
-    if (g_HasModel && g_WantedClump < g_Clumps.size()) {
-		g_iScene->UpdateClump(g_Clumps[g_WantedClump], m_Transform);
-		g_iScene->AlbedoRender(g_Clumps[g_WantedClump]);
+	for (size_t c = 0; c < g_Clumps.size(); c++) {
+		g_iScene->UpdateClump(g_Clumps[c], m_Transform);
+	}
+	if (g_ShouldAllDraw) {
+		g_iScene->AlbedoRender();
+	}
+	else {
+		if (g_HasModel && g_WantedClump < g_Clumps.size()) {
+			g_iScene->AlbedoRender(g_Clumps[g_WantedClump]);
+		}
 	}
 	return m_Return;
 }
 
 void Game::Quit() {
+	for (falx::IMaterial* m_Material : g_Materials) {
+		if (((ulargeint)m_Material) != NULL) {
+			m_Material->Dismiss();
+			delete m_Material;
+		}
+	}
+	g_Materials.clear();
+	free((void*)g_FilePath);
 	g_iScene->Dismiss();
 	delete g_iScene;
 	g_iScene = NULL;
-	free((void*)g_FilePath);
 }

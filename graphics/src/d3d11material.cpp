@@ -8,10 +8,11 @@ bit falx::D3D11Material::Create(MATERIAL_DESC& aDesc, SamplerMode aSamplerMode, 
 {
 	
 	{
-		// -TRIVIALISM
-		FLX_ZMEM(this, sizeof(*this));
 		i_GraphicsDevice = (D3D11GraphicsDevice*)aiGraphicsDevice;
 		m_BitmapSize = aDesc.BitmapSize;
+		i_SamplerState = NULL;
+		i_Texture = NULL;
+		i_TextureView = NULL;
 	}
 	{
 		D3D11_SAMPLER_DESC m_SamplerDesc;
@@ -64,6 +65,7 @@ bit falx::D3D11Material::Create(MATERIAL_DESC& aDesc, SamplerMode aSamplerMode, 
 			D3D11_SUBRESOURCE_DATA m_SubresourceData;
 			FLX_ZMEM(&m_SubresourceData, sizeof(m_SubresourceData));
 			m_SubresourceData.pSysMem = aDesc.BitmapData;
+			m_SubresourceData.SysMemPitch = aDesc.BitmapSize.x * 4;
 			FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
 		}
 	}
@@ -87,6 +89,7 @@ bit falx::D3D11Material::Reset(MATERIAL_DESC& aDesc)
 	D3D11_SUBRESOURCE_DATA m_SubresourceData;
 	FLX_ZMEM(&m_SubresourceData, sizeof(m_SubresourceData));
 	m_SubresourceData.pSysMem = aDesc.BitmapData;
+	m_SubresourceData.SysMemPitch = aDesc.BitmapSize.x * 4;
 	i_TextureView->Release();
 	i_Texture->Release();
 	FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
