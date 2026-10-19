@@ -59,6 +59,8 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_MsaaQuality = 1;
 		i_RectangleVertexBuffer = NULL;
 		i_RectangleIndexBuffer = NULL;
+		i_Dsv = NULL;
+		m_DepthEnabled = true;
 		h_Window = (HWND)aiWindow->GetWindowsIdentifier();
 		i_Window = aiWindow;
 	}
@@ -100,7 +102,6 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_SwapChainDesc.SampleDesc.Quality = m_MsaaQuality - 1;
 		m_SwapChainDesc.OutputWindow = h_Window;
 		m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		FLX_SMART_CHECK_HRESULT(i_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&i_DxgiDevice), "DXGI device retrieval failed");
 		FLX_SMART_CHECK_HRESULT(i_DxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&i_Adapter), "DXGI adapter retrieval failed");
 		FLX_SMART_CHECK_HRESULT(i_Adapter->GetParent(__uuidof(IDXGIFactory), (void**)&i_Factory), "DXGI factory retrieval failed");
@@ -112,6 +113,25 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		FLX_SMART_CHECK_HRESULT(i_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&i_DxgiTexture), "DXGI RTO texture recieval failed");
 		FLX_SMART_CHECK_HRESULT(i_Device->CreateRenderTargetView(i_DxgiTexture, NULL, &i_DxgiRepView), "Main RTV creation failed");
 		i_DxgiTexture->Release();
+	}
+	{
+		RECT m_WindowRect;
+		GetClientRect(h_Window, &m_WindowRect);
+		D3D11_TEXTURE2D_DESC m_DepthTextureDesc;
+		FLX_ZMEM(&m_DepthTextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+		m_DepthTextureDesc.Width = (uint32)(m_WindowRect.right - m_WindowRect.left);
+		m_DepthTextureDesc.Height = (uint32)(m_WindowRect.bottom - m_WindowRect.top);
+		m_DepthTextureDesc.MipLevels = 1;
+		m_DepthTextureDesc.ArraySize = 1;
+		m_DepthTextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		m_DepthTextureDesc.SampleDesc.Count = m_MsaaLevels;
+		m_DepthTextureDesc.SampleDesc.Quality = m_MsaaQuality - 1;
+		m_DepthTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		m_DepthTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		ID3D11Texture2D* i_DepthTexture;
+		FLX_SMART_CHECK_HRESULT(i_Device->CreateTexture2D(&m_DepthTextureDesc, NULL, &i_DepthTexture), "Depth texture creation failed");
+		FLX_SMART_CHECK_HRESULT(i_Device->CreateDepthStencilView(i_DepthTexture, NULL, &i_Dsv), "Depth stencil view creation failed");
+		i_DepthTexture->Release();
 	}
 	{
 		D3D11_BLEND_DESC m_BlendDesc;
@@ -207,8 +227,10 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 	ImGui::NewFrame();
 #endif // FLX_ALLOW_IMGUI
 	i_Context->ClearRenderTargetView(i_DxgiRepView, (const float32*)&m_ClearColor.x);
+	i_Context->ClearDepthStencilView(i_Dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	i_Context->OMSetBlendState(i_BlendState, NULL, 0xffffffff);
-	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, NULL);
+	i_Context->OMSetRenderTargets(1, &i_DxgiRepView, i_Dsv);
+	i_Context->OMSetDepthStencilState(m_DepthEnabled ? i_DssEnabled : i_DssDisabled, 0);
 	i_Context->RSSetState(i_RasterizerState);
 	{
 		FLX_ZMEM(&m_Viewport, sizeof(D3D11_VIEWPORT));
@@ -221,6 +243,10 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 	}
 }
 
+void falx::D3D11GraphicsDevice::SetDepth(bit aEnableDepth)
+{
+	m_DepthEnabled = aEnableDepth;
+}
 void falx::D3D11GraphicsDevice::EndFrame()
 {
 	i_Context->OMSetBlendState(i_BlendState, NULL, 0xffffffff);
@@ -275,6 +301,7 @@ void falx::D3D11GraphicsDevice::Dismiss()
 	i_RectangleIndexBuffer->Release();
 	i_RectangleVertexBuffer->Release();
 	i_BlendState->Release();
+	i_Dsv->Release();
 	i_DxgiRepView->Release();
 	i_SwapChain->Release();
 	i_Factory->Release();

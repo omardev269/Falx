@@ -42,10 +42,12 @@ namespace falx {
 
 		ID3D11DepthStencilState* i_DssEnabled;
 		ID3D11DepthStencilState* i_DssDisabled;
+		bit m_DepthEnabled;
 		// -
 	public:
 		// output view
 		ID3D11RenderTargetView* i_DxgiRepView;
+	ID3D11DepthStencilView* i_Dsv;
 	private:
 		// - dxgi
 		
@@ -66,6 +68,7 @@ namespace falx {
 		bit Create(bit aAllowSoftwareRendering, IWindow* aiWindow) override;
 		void BeginFrame() override;
 		void EndFrame() override;
+		void SetDepth(bit aEnableDepth) override;
 		FLX_INLINEFUNC void AddGBuffer(ID3D11ShaderResourceView* aiGbuffer) { i_Gbuffers.push_back(aiGbuffer); }
 		FLX_INLINEFUNC ID3D11Device* GetDevice() { return i_Device; }
 		FLX_INLINEFUNC ID3D11DeviceContext* GetContext() { return i_Context; }

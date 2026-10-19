@@ -11,6 +11,7 @@
 namespace falx {
 	struct IGraphicsDevice : IUpdateable {
 		virtual bit Create(bit aAllowSoftwareRendering, IWindow* aiWindow) = 0;
+		virtual void SetDepth(bit aEnableDepth) = 0;
 	};
 	// The output should be NULL on failure
 	// -
