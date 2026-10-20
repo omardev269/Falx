@@ -144,7 +144,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		m_BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateBlendState(&m_BlendDesc, &i_BlendState), "Debug overlay blend state creation failed");
+		FLX_SMART_CHECK_HRESULT(i_Device->CreateBlendState(&m_BlendDesc, &i_BlendState), "Blend state creation failed");
 	}
 	{
 		D3D11_BUFFER_DESC m_RectangleVertexBufferDesc;

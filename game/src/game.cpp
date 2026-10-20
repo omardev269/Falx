@@ -167,6 +167,12 @@ bit Game::PerFrame() {
 	if (falx::g_iWindow->GetKey(falx::Key::A)) {
 		g_Camera.Move({ 1.0f, 0.0f, 0.0f });
 	}
+	if (falx::g_iWindow->GetKey(falx::Key::Space)) {
+		g_Camera.Move({ 0.0f, -1.0f, 0.0f });
+	}
+	if (falx::g_iWindow->GetKey(falx::Key::LeftShift)) {
+		g_Camera.Move({ 0.0f, 1.0f, 0.0f });
+	}
 	largefloat m_DeltaTime = 0;
 	if (!falx::g_iProfiler->IsFirstFrame()) {
 		falx::g_iProfiler->GetDelta(m_DeltaTime);

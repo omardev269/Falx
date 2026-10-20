@@ -36,14 +36,18 @@ static void Fatality(const char* aProblem, const char* aTitle, uint16 aExitCode)
 #ifdef FLX_DEBUG
 void falx::AssertHelper(const char* aExpression, const char* aFile, uint32 aLine, const char* aFunc)
 {
-	DbgBreak();
+#ifdef FLX_WIN32
+	std::string m_Message = std::format("{}\n@\n{}:{}:{}\nPress OK to debug", aExpression, aFile, aFunc, aLine);
+#else
 	std::string m_Message = std::format("{}\n@\n{}:{}:{}", aExpression, aFile, aFunc, aLine);
+#endif
 	::Fatality(m_Message.c_str(), "Assertion FAILED", FLX_ERROR_ASSERT);
+	DbgBreak();
 }
 void falx::Log(const char* aMessage, const char* aFile, uint32 aLine, const char* aFunc)
 {
 #ifdef FLX_WIN32
-	std::string m_Formatted = std::format("{}:{} @ {}: {}", aLine, aFunc, aFile, aMessage);
+	std::string m_Formatted = std::format("{} @ {}:{}: {}", aFile, aFunc, aLine, aMessage);
 	OutputDebugStringA(m_Formatted.c_str());
 #else
 	printf("%s", m_Formatted.c_str());
@@ -52,10 +56,10 @@ void falx::Log(const char* aMessage, const char* aFile, uint32 aLine, const char
 void falx::Log(std::string aMessage, const char* aFile, uint32 aLine, const char* aFunc)
 {
 #ifdef FLX_WIN32
-	std::string m_Formatted = std::format("{}:{} @ {}: {}", aLine, aFunc, aFile, aMessage);
+	std::string m_Formatted = std::format("{} @ {}:{}: {}", aFile, aFunc, aLine, aMessage);
 	OutputDebugStringA(m_Formatted.c_str());
 #else
-	printf("%s", aMessage.c_str());
+	printf("%s", m_Formatted.c_str());
 #endif // FLX_WIN32
 }
 #else
@@ -71,5 +75,5 @@ void falx::Quit(const char* aMessage)
 }
 void falx::Quit()
 {
-	exit(FLX_ERROR_OTHER);
+	Fatality("Sudden fault", "FAULT", FLX_ERROR_OTHER);
 }
