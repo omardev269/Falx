@@ -86,7 +86,8 @@ bit Game::PerFrame() {
 				m_TotalVerts += m_Clump.m_NumVerts;
 				m_TotalIndices += m_Clump.m_NumIndices;
 			}
-			if (!m_Clumps.empty() && m_TotalVerts > 0 && m_TotalVerts <= 0xFFFF) {
+			// ai is dumb
+			//if (!m_Clumps.empty() && m_TotalVerts > 0 && m_TotalVerts <= 0xFFFF) {
 				const uint32 c_SourceFloats = 8;
 				const uint32 c_SceneFloats = 5;
 				std::vector<float32> m_Verts;
@@ -139,13 +140,21 @@ bit Game::PerFrame() {
 				g_WantedClump = 0;
 				g_HasModel = true;
 				g_ShouldOpenSelector = false;
-			}
+			//}
 		}
 		ImGui::End();
 	}
 #ifdef FLX_ALLOW_IMGUI
+	ImGui::Begin("Camera");
+	float3 m_Pos;
+	g_Camera.GetPosition(m_Pos);
+	ImGui::Text("Position: %.2f, %.2f, %.2f", m_Pos.x, m_Pos.y, m_Pos.z);
+	float3 m_Rot;
+	g_Camera.GetRotation(m_Rot);
+	ImGui::Text("Rotation: %.2f, %.2f, %.2f", m_Rot.x, m_Rot.y, m_Rot.z);
+	ImGui::End();
 	if (g_HasModel) {
-		ImGui::Begin("AlhamdullIllah!");
+		ImGui::Begin("Clumper");
 		if (ImGui::Button("Toggle All Draw")) {
 			g_ShouldAllDraw = !g_ShouldAllDraw;
 		}

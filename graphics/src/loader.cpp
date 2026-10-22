@@ -12,6 +12,7 @@
 void falx::LoadModel(const char* aPath, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes)
 {
 	Assimp::Importer h_Importer;
+	h_Importer.SetPropertyBool(AI_CONFIG_FBX_CONVERT_TO_M, true);
 	const aiScene* p_Scene = h_Importer.ReadFile(aPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_PreTransformVertices | aiProcess_GenNormals);
 	FLX_SMART_CHECK(p_Scene != NULL, "Failed to load model");
 	oClumps.clear();
@@ -69,15 +70,22 @@ void falx::LoadModel(const char* aPath, std::vector<IndividualClump>& oClumps, s
 			bool m_Loaded = false;
 			if (p_Material->GetTextureCount(aiTextureType_BASE_COLOR) > 0) {
 				m_HasTexture = p_Material->GetTexture(aiTextureType_BASE_COLOR, 0, &m_TexturePath) == AI_SUCCESS;
+				std::string m_1 = m_TexturePath.C_Str();
+				m_1 += "\n";
+				FLX_LOG(m_1);
 			}
 			else if (p_Material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 				m_HasTexture = p_Material->GetTexture(aiTextureType_DIFFUSE, 0, &m_TexturePath) == AI_SUCCESS;
+				std::string m_1 = m_TexturePath.C_Str();
+				m_1+="\n";
+				FLX_LOG(m_1);
 			}
 			if (m_HasTexture) {
 				int m_ImgW = 0;
 				int m_ImgH = 0;
 				int m_ImgComp = 0;
 				uint8* p_Pixels = nullptr;
+				const aiTexture* p_Texture = p_Scene->GetEmbeddedTexture(m_TexturePath.C_Str());
 				if (m_TexturePath.C_Str()[0] == '*') {
 					uint32 m_TexIndex = static_cast<uint32>(atoi(&m_TexturePath.C_Str()[1]));
 					const aiTexture* p_Texture = (m_TexIndex < p_Scene->mNumTextures) ? p_Scene->mTextures[m_TexIndex] : nullptr;

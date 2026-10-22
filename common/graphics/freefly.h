@@ -14,6 +14,8 @@ namespace falx {
 		float32 m_Speed;
 	public:
 		void Reset();
+		void GetPosition(float3& oPos);
+		void GetRotation(float3& oRot);
 		void Teleport(float3 aPos);
 		void SetRotation(float3 aRot);
 		void Move(float3 aDelta);

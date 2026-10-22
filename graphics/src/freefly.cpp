@@ -13,6 +13,16 @@ namespace falx {
 		m_Speed = 1.0f;
 	}
 
+	void FreeflyCamera::GetPosition(float3& oPos)
+	{
+		oPos = m_Position;
+	}
+
+	void FreeflyCamera::GetRotation(float3& oRot)
+	{
+		oRot = m_Rotation;
+	}
+
 	void FreeflyCamera::Teleport(float3 aPos) {
 		m_Position = aPos;
 	}
