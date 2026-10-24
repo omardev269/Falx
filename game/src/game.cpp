@@ -18,9 +18,10 @@ struct AnimatorPhase {
 	std::string m_GuideInfo;
 	float3 m_StartPos;
 	float3 m_EndPos;
+	float3 m_Rotation;
 };
 static std::vector<AnimatorPhase> g_AnimatorPhases = {
-	{ 0, 2, 0, "This is pretty smart",{ 0, 0, 0 },{ 0, -1, 0 } }
+	{ 0, 3.5f, 0, "This is a smart classroom",{ 2, -2, 0 },{ 1.5, -1.5, 0.5 },{ 0, 45, 0 } }
 };
 static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
@@ -66,6 +67,9 @@ bit Game::PerFrame() {
 			if (m_Phase.m_Elapsed >= m_Phase.m_Duration) {
 				g_AnimatorPhaseIndex++;
 				g_GuideInfo = "";
+				FLX_LOG("New phase started");
+				g_Camera.Teleport({ 0,-1, 0 });
+				g_Camera.SetRotation({ 0, 0, 0 });
 			}
 			else {
 				float32 m_Timeframe = m_Phase.m_Elapsed / m_Phase.m_Duration;
@@ -73,13 +77,12 @@ bit Game::PerFrame() {
 				FLX_ZMEM(&m_CurrentPos, sizeof(m_CurrentPos));
 				gb_vec3_lerp((gbVec3*)&m_CurrentPos, ToGbVec3(m_Phase.m_StartPos), ToGbVec3(m_Phase.m_EndPos), m_Timeframe);
 				g_Camera.Teleport(m_CurrentPos);
-				g_Camera.SetRotation({ 0, 0, 0 });
+				g_Camera.SetRotation(m_Phase.m_Rotation);
 				g_GuideInfo = m_Phase.m_GuideInfo;
 			}
 		}
 		else {
 			g_Free = true;
-			FLX_LOG("Switched to free mode");
 		}
 	}
 	// free
@@ -101,7 +104,7 @@ bit Game::PerFrame() {
 	}
 	// guidance panel
 	{
-		ImGui::Begin("Smart Classroom");
+		ImGui::Begin("Smart Classroom", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 		if (g_Free) {
 			ImGui::Text("Free");
 		}
@@ -124,7 +127,7 @@ bit Game::PerFrame() {
 	}
 	// camera
 	{
-		g_Camera.Update(GetDeltaTime(), 60, 800.0f / 600.0f);
+		g_Camera.Update(GetDeltaTime(), 70, 800.0f / 600.0f);
 		g_Camera.GetMatrix(g_PV);
 	}
 	g_iScene->AlbedoRender(g_PV);
