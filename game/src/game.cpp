@@ -21,7 +21,8 @@ struct AnimatorPhase {
 	float3 m_Rotation;
 };
 static std::vector<AnimatorPhase> g_AnimatorPhases = {
-	{ 0, 3.5f, 0, "This is a smart classroom",{ 2, -2, 0 },{ 1.5, -1.5, 0.5 },{ 0, 45, 0 } }
+	{ 0, 3.5f, 0, "This is a smart classroom",{ 3, -2.5, -3 },{ 2.5, -1.5, -2.5 },{ 0, 45, 0 } },
+	{ 0, 3.5f, 0, "This classroom is energy-sufficient\nIt uses solar panels!" ,{ 2.5, -4.75, -0.5 },{ 2.25, -4.25, -0.25 },{ 0, 90, 0 }, }
 };
 static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
@@ -44,6 +45,7 @@ void Game::Start() {
 	CreateGraphicsScene(g_iScene, g_iGdev);
 	FLX_SMART_CHECK(g_iScene != NULL, "Failed to create graphics scene");
 	FLX_SMART_CHECK(LoadModelIntoScene("c2.glb", g_iScene), "Failed to load model0 into scene");
+	FLX_SMART_CHECK(LoadModelIntoScene("spanel.glb", g_iScene), "Failed to load model1 into scene");
 }
 matrix4x4 g_PV;
 bit g_Admin = false;
@@ -100,13 +102,19 @@ bit Game::PerFrame() {
 			if (g_iWindow->GetKey(falx::Key::D)) {
 				g_Camera.Move({ -1, 0, 0 });
 			}
+			if (g_iWindow->GetKey(falx::Key::Space)) {
+				g_Camera.Move({ 0, -1, 0 });
+			}
+			if (g_iWindow->GetKey(falx::Key::LeftShift)) {
+				g_Camera.Move({ 0, 1, 0 });
+			}
 		}
 	}
 	// guidance panel
 	{
-		ImGui::Begin("Smart Classroom", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+		ImGui::Begin("Smart Classroom", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize);
 		if (g_Free) {
-			ImGui::Text("Free");
+			ImGui::Text("Freemode!");
 		}
 		else {
 			ImGui::Text(g_GuideInfo.c_str());
@@ -119,6 +127,12 @@ bit Game::PerFrame() {
 		ImGui::Checkbox("Admin Mode", &g_Admin);
 		if (g_Admin) {
 			ImGui::Checkbox("Free Mode", &g_Free);
+			float3 m_Position;
+			float3 m_Rotation;
+			g_Camera.GetPosition(m_Position);
+			g_Camera.GetRotation(m_Rotation);
+			ImGui::Text("Camera Position: { %.2f, %.2f, %.2f }", m_Position.x, m_Position.y, m_Position.z);
+			ImGui::Text("Camera Rotation: { %.2f, %.2f, %.2f }", m_Rotation.x, m_Rotation.y, m_Rotation.z);
 		}
 		else {
 			//g_Free = false;
