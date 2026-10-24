@@ -23,5 +23,6 @@ namespace falx {
 	void LoadModel(const char* aPath, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes);
 	bit LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes);
 	bit LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene);
+	bit LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, float3 aPosition, float3 aRotation);
 }
 #endif // !LOADER_H_FLX

@@ -33,7 +33,8 @@ static bit IsBrushOpaque(const falx::Brush& aBrush)
 	return true;
 }
 
-bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes)
+namespace falx {
+	static bit LoadModelIntoSceneWithTransform(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes, matrix4x4 aTransform)
 {
 	if (aPath == NULL || aiScene == NULL) return false;
 	LoadModel(aPath, oClumps, oBrushes);
@@ -83,13 +84,10 @@ bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, std::ve
 	std::vector<CLUMP_METADATA> m_Metadata;
 	m_Metadata.reserve(oClumps.size());
 	
-	matrix4x4 m_Identity = {};
-	gb_mat4_identity((gbMat4*)&m_Identity);
-	
 	for (uint32 m_ClumpIndex : m_Order) {
 		const IndividualClump& m_Clump = oClumps[m_ClumpIndex];
 		CLUMP_METADATA m_Meta = {};
-		m_Meta.Transform = m_Identity;
+		m_Meta.Transform = aTransform;
 		m_Meta.StartVertexBufferBytes = m_Verts.size() * sizeof(float32);
 		m_Meta.StartIndexBufferBytes = m_Indices.size() * sizeof(uint16);
 		m_Meta.StartIndex = m_Indices.size();
@@ -119,12 +117,52 @@ bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, std::ve
 	}
 	return true;
 }
+}
+
+bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes)
+{
+	matrix4x4 m_Identity = {};
+	gb_mat4_identity((gbMat4*)&m_Identity);
+	return LoadModelIntoSceneWithTransform(aPath, aiScene, oClumps, oBrushes, m_Identity);
+}
 
 bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene)
 {
 	std::vector<IndividualClump> m_Clumps;
 	std::vector<Brush> m_Brushes;
 	bit m_Result = LoadModelIntoScene(aPath, aiScene, m_Clumps, m_Brushes);
+	for (IndividualClump& m_Clump : m_Clumps) {
+		free(m_Clump.m_ModelVerts);
+		free(m_Clump.m_ModelIndices);
+	}
+	for (Brush& m_Brush : m_Brushes) {
+		free(m_Brush.m_Bitmap);
+	}
+	return m_Result;
+}
+
+bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, float3 aPosition, float3 aRotation)
+{
+	if (aPath == NULL || aiScene == NULL) return false;
+
+	gbMat4 m_RotateX;
+	gbMat4 m_RotateY;
+	gbMat4 m_RotateZ;
+	gbMat4 m_RotateXY;
+	gbMat4 m_Rotation;
+	gbMat4 m_Translation;
+	gbMat4 m_Transform;
+	gb_mat4_rotate(&m_RotateX, { 1, 0, 0 }, gb_to_radians(aRotation.x));
+	gb_mat4_rotate(&m_RotateY, { 0, 1, 0 }, gb_to_radians(aRotation.y));
+	gb_mat4_rotate(&m_RotateZ, { 0, 0, 1 }, gb_to_radians(aRotation.z));
+	gb_mat4_mul(&m_RotateXY, &m_RotateX, &m_RotateY);
+	gb_mat4_mul(&m_Rotation, &m_RotateXY, &m_RotateZ);
+	gb_mat4_translate(&m_Translation, { aPosition.x, aPosition.y, aPosition.z });
+	gb_mat4_mul(&m_Transform, &m_Rotation, &m_Translation);
+
+	std::vector<IndividualClump> m_Clumps;
+	std::vector<Brush> m_Brushes;
+	bit m_Result = LoadModelIntoSceneWithTransform(aPath, aiScene, m_Clumps, m_Brushes, *reinterpret_cast<matrix4x4*>(&m_Transform));
 	for (IndividualClump& m_Clump : m_Clumps) {
 		free(m_Clump.m_ModelVerts);
 		free(m_Clump.m_ModelIndices);
