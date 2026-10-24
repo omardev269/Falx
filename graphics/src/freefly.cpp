@@ -62,6 +62,7 @@ namespace falx {
 		m_Position.x += m_PositionalDelta.x;
 		m_Position.y += m_PositionalDelta.y;
 		m_Position.z += m_PositionalDelta.z;
+		FLX_ZMEM(&m_PositionalDelta, sizeof(m_PositionalDelta));
 		// - rotation
 		m_RotationalDelta.x *= m_Speed;
 		m_RotationalDelta.y *= m_Speed;

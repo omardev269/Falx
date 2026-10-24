@@ -20,7 +20,7 @@ struct AnimatorPhase {
 	float3 m_EndPos;
 };
 static std::vector<AnimatorPhase> g_AnimatorPhases = {
-	{ 0, 1, 0, "This is pretty smart",{ 0, 1, 5 },{ 0, 1, 5 } }
+	{ 0, 2, 0, "This is pretty smart",{ 0, 0, 0 },{ 0, -1, 0 } }
 };
 static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
@@ -39,19 +39,66 @@ static FLX_INLINEFUNC largefloat GetDeltaTime() {
 }
 void Game::Start() {
 	using namespace falx;
+	g_Camera.Reset();
 	CreateGraphicsScene(g_iScene, g_iGdev);
 	FLX_SMART_CHECK(g_iScene != NULL, "Failed to create graphics scene");
 	FLX_SMART_CHECK(LoadModelIntoScene("c2.glb", g_iScene), "Failed to load model0 into scene");
 }
 matrix4x4 g_PV;
 bit g_Admin = false;
-bit g_Free = true;
+bit g_Free = false;
 std::string g_GuideInfo;
+static FLX_INLINEFUNC gbVec3 ToGbVec3(float3 aVec) {
+	gbVec3 m_Result;
+	m_Result.x = aVec.x;
+	m_Result.y = aVec.y;
+	m_Result.z = aVec.z;
+	return m_Result;
+}
 bit Game::PerFrame() {
 	using namespace falx;
 	bit m_Continue = !g_iWindow->ShouldClose();
 	// tourist helper
-	
+	{
+		if (g_AnimatorPhaseIndex < g_AnimatorPhases.size()) {
+			AnimatorPhase& m_Phase = g_AnimatorPhases[g_AnimatorPhaseIndex];
+			m_Phase.m_Elapsed += static_cast<float32>(GetDeltaTime());
+			if (m_Phase.m_Elapsed >= m_Phase.m_Duration) {
+				g_AnimatorPhaseIndex++;
+				g_GuideInfo = "";
+			}
+			else {
+				float32 m_Timeframe = m_Phase.m_Elapsed / m_Phase.m_Duration;
+				float3 m_CurrentPos;
+				FLX_ZMEM(&m_CurrentPos, sizeof(m_CurrentPos));
+				gb_vec3_lerp((gbVec3*)&m_CurrentPos, ToGbVec3(m_Phase.m_StartPos), ToGbVec3(m_Phase.m_EndPos), m_Timeframe);
+				g_Camera.Teleport(m_CurrentPos);
+				g_Camera.SetRotation({ 0, 0, 0 });
+				g_GuideInfo = m_Phase.m_GuideInfo;
+			}
+		}
+		else {
+			g_Free = true;
+			FLX_LOG("Switched to free mode");
+		}
+	}
+	// free
+	{
+		if (g_Free) {
+			if (g_iWindow->GetKey(falx::Key::W)) {
+				g_Camera.Move({ 0, 0, 1 });
+			}
+			if (g_iWindow->GetKey(falx::Key::S)) {
+				g_Camera.Move({ 0, 0, -1 });
+			}
+			if (g_iWindow->GetKey(falx::Key::A)) {
+				g_Camera.Move({ 1, 0, 0 });
+			}
+			if (g_iWindow->GetKey(falx::Key::D)) {
+				g_Camera.Move({ -1, 0, 0 });
+			}
+		}
+	}
 	// guidance panel
 	{
 		ImGui::Begin("Smart Classroom");
@@ -71,7 +118,7 @@ bit Game::PerFrame() {
 			ImGui::Checkbox("Free Mode", &g_Free);
 		}
 		else {
-			g_Free = false;
+			//g_Free = false;
 		}
 		ImGui::End();
 	}
