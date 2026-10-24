@@ -158,7 +158,7 @@ bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, float3 
 	gb_mat4_mul(&m_RotateXY, &m_RotateX, &m_RotateY);
 	gb_mat4_mul(&m_Rotation, &m_RotateXY, &m_RotateZ);
 	gb_mat4_translate(&m_Translation, { aPosition.x, aPosition.y, aPosition.z });
-	gb_mat4_mul(&m_Transform, &m_Rotation, &m_Translation);
+	gb_mat4_mul(&m_Transform, &m_Translation, &m_Rotation);
 
 	std::vector<IndividualClump> m_Clumps;
 	std::vector<Brush> m_Brushes;

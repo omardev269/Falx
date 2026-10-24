@@ -47,6 +47,7 @@ void Game::Start() {
 	FLX_SMART_CHECK(g_iScene != NULL, "Failed to create graphics scene");
 	FLX_SMART_CHECK(LoadModelIntoScene("c2.glb", g_iScene), "Failed to load model0 into scene");
 	FLX_SMART_CHECK(LoadModelIntoScene("spanel.glb", g_iScene), "Failed to load model1 into scene");
+	FLX_SMART_CHECK(LoadModelIntoScene("ac.glb", g_iScene, { -3,2.6,1.75 }, { 0,90,0 }), "Failed to load model2 into scene");
 }
 matrix4x4 g_PV;
 bit g_Admin = false;
