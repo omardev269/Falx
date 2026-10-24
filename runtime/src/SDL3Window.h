@@ -14,6 +14,8 @@ namespace falx {
 		bool m_ShouldClose;
 		float2 m_MousePos;
 		float2 m_MouseDelta;
+		float2 m_UIMousePos = {};
+		bit m_Concentrated = true;
 		#ifdef FLX_ALLOW_IMGUI
 				ImGuiContext* p_ImGuiContext;
 		#endif // FLX_ALLOW_IMGUI
@@ -24,6 +26,11 @@ namespace falx {
 		bool GetMouseButton(MouseButton aButton) override;
 		void GetMouseDelta(float2& oDelta) override;
 		void GetMousePos(float2& oPos) override;
+		bool GetKeyUI(Key aKey) override;
+		bool GetMouseButtonUI(MouseButton aButton) override;
+		void GetMouseDeltaUI(float2& oDelta) override;
+		void GetMousePosUI(float2& oPos) override;
+		void ConcentrateMouse(bit aConcentrate) override;
 		void* GetWindowsIdentifier() override; 
 		#ifdef FLX_ALLOW_IMGUI
 		ImGuiContext* GetImGuiContext() override;

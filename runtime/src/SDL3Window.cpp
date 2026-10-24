@@ -71,6 +71,9 @@ namespace falx {
 			}
 		}
 		FLX_LOG("SDL3 window successfully created");
+		m_Concentrated = true;
+		SDL_SetWindowRelativeMouseMode(p_Window, true);
+		SDL_HideCursor();
 #ifdef FLX_ALLOW_IMGUI
 		IMGUI_CHECKVERSION();
 		p_ImGuiContext = ImGui::CreateContext();
@@ -85,14 +88,58 @@ namespace falx {
 	{
 		return m_ShouldClose;
 	}
-	bool SDL3Window::GetKey(Key aKey)
+	static bool RawKey(Key aKey)
 	{
 		SDL_Scancode m_Scancode = KeyToScancode(aKey);
 		if (m_Scancode == SDL_SCANCODE_UNKNOWN) {
 			return false;
 		}
-		const bit* m_Scancodes = SDL_GetKeyboardState(NULL);
+		const bool* m_Scancodes = SDL_GetKeyboardState(NULL);
 		return m_Scancodes[m_Scancode];
+	}
+	static bool RawMouseButton(MouseButton aButton)
+	{
+		int m_Button = MouseButtonToSDL(aButton);
+		if (m_Button == 0) {
+			return false;
+		}
+		return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_MASK(m_Button)) != 0;
+	}
+	bool SDL3Window::GetKey(Key aKey)
+	{
+		return m_Concentrated && RawKey(aKey);
+	}
+	bool SDL3Window::GetKeyUI(Key aKey)
+	{
+		return !m_Concentrated && RawKey(aKey);
+	}
+	bool SDL3Window::GetMouseButtonUI(MouseButton aButton)
+	{
+		return !m_Concentrated && RawMouseButton(aButton);
+	}
+	void SDL3Window::GetMouseDeltaUI(float2& oDelta)
+	{
+		oDelta = {};
+	}
+	void SDL3Window::GetMousePosUI(float2& oPos)
+	{
+		oPos = m_UIMousePos;
+	}
+	void SDL3Window::ConcentrateMouse(bit aConcentrate)
+	{
+		m_Concentrated = aConcentrate;
+		SDL_SetWindowRelativeMouseMode(p_Window, aConcentrate);
+		if (aConcentrate) {
+			SDL_HideCursor();
+		}
+		else {
+			SDL_ShowCursor();
+		}
+		m_MouseDelta = {};
+	}
+	bool SDL3Window::GetMouseButton(MouseButton aButton)
+	{
+		return m_Concentrated && RawMouseButton(aButton);
 	}
 #ifdef FLX_ALLOW_IMGUI
 	ImGuiContext* SDL3Window::GetImGuiContext()
@@ -105,18 +152,10 @@ namespace falx {
 		ImGui_ImplSDL3_NewFrame();
 	}
 #endif // FLX_ALLOW_IMGUI
-	bool SDL3Window::GetMouseButton(MouseButton aButton)
-	{
-		int m_Button = MouseButtonToSDL(aButton);
-		if (m_Button == 0) {
-			return false;
-		}
-		return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_MASK(m_Button);
-	}
 
 	void SDL3Window::GetMouseDelta(float2& oDelta)
 	{
-		oDelta = m_MouseDelta;
+		oDelta = m_Concentrated ? m_MouseDelta : float2{};
 	}
 
 	void SDL3Window::GetMousePos(float2& oPos)
@@ -139,7 +178,9 @@ namespace falx {
 #endif // FLX_ALLOW_IMGUI
 		while (SDL_PollEvent(&h_Event)) {
 #ifdef FLX_ALLOW_IMGUI
-			ImGui_ImplSDL3_ProcessEvent(&h_Event);
+			if (!m_Concentrated) {
+				ImGui_ImplSDL3_ProcessEvent(&h_Event);
+			}
 #endif // FLX_ALLOW_IMGUI
 			if (h_Event.type == SDL_EVENT_QUIT) {
 				m_ShouldClose = true;
@@ -147,15 +188,16 @@ namespace falx {
 			if (h_Event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
 				m_ShouldClose = true;
 			}
-			if (h_Event.type == SDL_EVENT_MOUSE_MOTION) {
-				m_MouseDelta.x = h_Event.motion.xrel;
-				m_MouseDelta.y = h_Event.motion.yrel;
-				m_MousePos.x = h_Event.motion.x;
-				m_MousePos.y = h_Event.motion.y;
+			if (m_Concentrated && h_Event.type == SDL_EVENT_MOUSE_MOTION) {
+				m_MouseDelta.x += h_Event.motion.xrel;
+				m_MouseDelta.y += h_Event.motion.yrel;
 			}
-			else {
-				SDL_GetMouseState(&m_MousePos.x, &m_MousePos.y);
-			}
+		}
+		if (m_Concentrated) {
+			SDL_GetMouseState(&m_MousePos.x, &m_MousePos.y);
+		}
+		else {
+			SDL_GetMouseState(&m_UIMousePos.x, &m_UIMousePos.y);
 		}
 	}
 	void SDL3Window::EndFrame()

@@ -37,14 +37,25 @@ namespace falx {
 		#endif // FLX_ALLOW_IMGUI
 		// True if the window is to be closed
 		virtual bool ShouldClose() = 0;
-		// True if the key is currently held down
+		// True if the key is currently held down (concentrated)
 		virtual bool GetKey(Key aKey) = 0;
-		// True if the mouse button is currently held down
+		// True if the key is currently held down (unconcentrated)
+		virtual bool GetKeyUI(Key aKey) = 0;
+		// True if the mouse button is currently held down (concentrated)
 		virtual bool GetMouseButton(MouseButton aButton) = 0;
-		// Mouse movement (in pixels) since the last frame
+		// True if the mouse button is currently held down (unconcentrated)
+		virtual bool GetMouseButtonUI(MouseButton aButton) = 0;
+		// Mouse movement (in pixels) since the last frame (concentrated)
 		virtual void GetMouseDelta(float2& oDelta) = 0;
-		// Mouse position (in pixels) relative to the window
+		// Mouse movement (in pixels) since the last frame (unconcentrated)
+		virtual void GetMouseDeltaUI(float2& oDelta) = 0;
+		// Bans ImGui and UI mouse collection (old data will be sent - keys and mbts + mdts will all be false / old / {0,0 for mdelt - old for mpos})
+		// Allows for standard getkey getmousebt getmousep getmousedt etc
+		virtual void ConcentrateMouse(bit aConcentrate) = 0;
+		// Mouse position (in pixels) relative to the window (concentrated)
 		virtual void GetMousePos(float2& oPos) = 0;
+		// Mouse position (in pixels) relative to the window (unconcentrated)
+		virtual void GetMousePosUI(float2& oPos) = 0;
 		#ifdef FLX_ALLOW_IMGUI
 				virtual ImGuiContext* GetImGuiContext() = 0;
 		#endif // FLX_ALLOW_IMGUI

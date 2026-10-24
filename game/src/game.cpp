@@ -23,7 +23,8 @@ struct AnimatorPhase {
 };
 static std::vector<AnimatorPhase> g_AnimatorPhases = {
 	{ 0, 3.5f, 0, "This is a smart classroom",{ 3, -2.5, -3 },{ 2.5, -1.5, -2.5 },{ 0, 45, 0 },{ 0, 45, 0 } },
-	{ 0, 3.5f, 0, "This classroom is energy-sufficient\nIt uses solar panels!" ,{ 2.5, -5.75, -0.5 },{ 2.25, -4.75, -0.25 },{ 0, 90, 20 },{ 0, 90, 0 }, }
+	{ 0, 3.5f, 0, "This classroom is energy-sufficient\nIt uses solar panels!" ,{ 2.5, -5.75, -0.5 },{ 2.25, -4.75, -0.25 },{ 0, 90, 20 },{ 0, 90, 0 }, },
+	{ 0, 4.0f, 0, "For the comfort of the students\nThis classroom is equipped with a modern AC\nIt works only when the temperature is\nless than 20(c) or higher than 22(c)",{ 2, -2.65, -2.0 },{ 1.5, -2.45, -2 },{ 0, 270, 0 },{ 0,270,15 } }
 };
 static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
@@ -63,6 +64,17 @@ static FLX_INLINEFUNC gbVec3 ToGbVec3(float3 aVec) {
 bit Game::PerFrame() {
 	using namespace falx;
 	bit m_Continue = !g_iWindow->ShouldClose();
+	// concentration switch (made initially by AI)
+	{
+		static bit s_Concentrated = true;
+		static bit s_EscWasDown = false;
+		bit m_EscDown = g_iWindow->GetKey(falx::Key::Escape) || g_iWindow->GetKeyUI(falx::Key::Escape);
+		if (m_EscDown && !s_EscWasDown) {
+			s_Concentrated = !s_Concentrated;
+			g_iWindow->ConcentrateMouse(s_Concentrated);
+		}
+		s_EscWasDown = m_EscDown;
+	}
 	// tourist helper
 	{
 		if (g_AnimatorPhaseIndex < g_AnimatorPhases.size()) {
@@ -95,17 +107,22 @@ bit Game::PerFrame() {
 	// free
 	{
 		if (g_Free) {
+			float3 m_CamRotation;
+			g_Camera.GetRotation(m_CamRotation);
+			const float32 m_YawRad = gb_to_radians(m_CamRotation.y);
+			const float32 m_Cos = cosf(m_YawRad);
+			const float32 m_Sin = sinf(m_YawRad);
 			if (g_iWindow->GetKey(falx::Key::W)) {
-				g_Camera.Move({ 0, 0, 1 });
+				g_Camera.Move({ -m_Sin, 0, m_Cos });
 			}
 			if (g_iWindow->GetKey(falx::Key::S)) {
-				g_Camera.Move({ 0, 0, -1 });
+				g_Camera.Move({ m_Sin, 0, -m_Cos });
 			}
 			if (g_iWindow->GetKey(falx::Key::A)) {
-				g_Camera.Move({ 1, 0, 0 });
+				g_Camera.Move({ m_Cos, 0, m_Sin });
 			}
 			if (g_iWindow->GetKey(falx::Key::D)) {
-				g_Camera.Move({ -1, 0, 0 });
+				g_Camera.Move({ -m_Cos, 0, -m_Sin });
 			}
 			if (g_iWindow->GetKey(falx::Key::Space)) {
 				g_Camera.Move({ 0, -1, 0 });
@@ -113,13 +130,24 @@ bit Game::PerFrame() {
 			if (g_iWindow->GetKey(falx::Key::LeftShift)) {
 				g_Camera.Move({ 0, 1, 0 });
 			}
+			// view rotation (skipped on the first frame)
+			static bit s_FirstLookFrame = true;
+			float2 m_MouseDelta;
+			g_iWindow->GetMouseDelta(m_MouseDelta);
+			if (s_FirstLookFrame) {
+				s_FirstLookFrame = false;
+			}
+			else {
+				const float32 k_Sensitivity = 0.1f;
+				g_Camera.Rotate({ m_MouseDelta.y * k_Sensitivity, m_MouseDelta.x * k_Sensitivity, 0 });
+			}
 		}
 	}
 	// guidance panel
 	{
 		ImGui::Begin("Smart Classroom", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize);
 		if (g_Free) {
-			ImGui::Text("Freemode!");
+			ImGui::Text("Freemode!\nUse WASD for movement and space + \nLeft Shift for vertical movement\nUse the mouse for rotating the camera");
 		}
 		else {
 			ImGui::Text(g_GuideInfo.c_str());

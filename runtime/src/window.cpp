@@ -16,6 +16,11 @@ namespace falx {
 		bool ShouldClose() override { return true; }
 		bool GetKey(Key) override { return false; }
 		bool GetMouseButton(MouseButton) override { return false; }
+		bool GetKeyUI(Key) override { return false; }
+		bool GetMouseButtonUI(MouseButton) override { return false; }
+		void GetMouseDeltaUI(float2& oDelta) override { oDelta = {}; }
+		void GetMousePosUI(float2& oPos) override { oPos = {}; }
+		void ConcentrateMouse(bit) override {}
 		void GetMouseDelta(float2& oDelta) override { oDelta = {}; }
 		void GetMousePos(float2& oPos) override { oPos = {}; }
 		void BeginFrame() override {}
