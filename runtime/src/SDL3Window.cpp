@@ -48,8 +48,8 @@ namespace falx {
 	}
 	void InitWindowSystem()
 	{
-		if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
-			FLX_LOG("SDL3 failed to initialize\n");
+		if (!SDL_Init(SDL_INIT_VIDEO)) {
+			FLX_LOG("SDL3 failed to initialize");
 		}
 	}
 	void ShutdownWindowSystem()

@@ -245,6 +245,7 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 		i_Context->RSSetViewports(1, &m_Viewport);
 	}
 #ifdef FLX_DEBUG
+#ifdef FLX_ALLOW_IMGUI
 	ImGui::SetNextWindowPos(ImVec2(m_Viewport.Width - 100.0f, 20.0f));
 	ImGui::Begin("Profiler", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings);
 	uint32 m_FPS = 0;
@@ -253,6 +254,7 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 	}
 	ImGui::Text("FPS: %u", m_FPS);
 	ImGui::End();
+#endif // FLX_ALLOW_IMGUI
 #endif // FLX_DEBUG
 }
 

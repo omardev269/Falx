@@ -40,6 +40,9 @@ namespace falx
 		virtual void AlbedoRender(ClumpID aClump, matrix4x4 aPV) = 0;
 		virtual void AlbedoRender(ObjectID aObject, matrix4x4 aPV) = 0;
 		virtual void AlbedoRender(matrix4x4 aPV) = 0;
+		// TODO
+		//virtual void EnumerateObjects(std::vector<ObjectID>& oObjects) = 0;
+		//virtual void EnumerateClumps(ObjectID aObject, std::vector<ClumpID>& oClumps) = 0;
 		virtual void Dismiss() = 0;
 	};
 	void CreateGraphicsScene(IGraphicsScene*& oiGraphicsScene, IGraphicsDevice* aiGraphicsDevice);
