@@ -13,13 +13,15 @@
 #include <vector>
 
 void Game::Start() {
-	
+	using namespace falx;
 }
 
 bit Game::PerFrame() {
-	
+	using namespace falx;
+	bit m_Continue = !g_iWindow->ShouldClose();
+	return m_Continue;
 }
 
 void Game::Quit() {
-
+	using namespace falx;
 }

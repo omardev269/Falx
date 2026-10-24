@@ -58,24 +58,25 @@ namespace falx {
 	}
 	bool SDL3Window::Create(const char* aTitle, int2 aWindowSize)
 	{
-		p_Window = SDL_CreateWindow(aTitle, aWindowSize.x, aWindowSize.y, SDL_WINDOW_OPENGL);
-		if (!p_Window) {
-			FLX_LOG("OpenGL is disabled for this window due to compatibility issues\n");
+		p_Window = NULL;
+		//p_Window = SDL_CreateWindow(aTitle, aWindowSize.x, aWindowSize.y, SDL_WINDOW_OPENGL);
+		if (true) { // OPENGL_COMPAT
+			if (p_Window) SDL_DestroyWindow(p_Window);
+			FLX_LOG("OpenGL is disabled for this window due to compatibility issues");
 			p_Window = SDL_CreateWindow(aTitle, aWindowSize.x, aWindowSize.y, 0);
 			if (!p_Window) {
 				FLX_LOG("Window creation failed - ");
 				FLX_LOG(SDL_GetError());
-				FLX_LOG("\n");
 				return false;
 			}
 		}
 		FLX_LOG("SDL3 window successfully created");
-		#ifdef FLX_ALLOW_IMGUI
+#ifdef FLX_ALLOW_IMGUI
 		IMGUI_CHECKVERSION();
 		p_ImGuiContext = ImGui::CreateContext();
 		ImGui::SetCurrentContext(p_ImGuiContext);
 		ImGuiIO& r_Io = ImGui::GetIO();
-		ImGui::StyleColorsDark();
+		ImGui::StyleColorsClassic();
 		ImGui_ImplSDL3_InitForD3D(p_Window);
 #endif // FLX_ALLOW_IMGUI
 		return true;
@@ -93,7 +94,7 @@ namespace falx {
 		const bit* m_Scancodes = SDL_GetKeyboardState(NULL);
 		return m_Scancodes[m_Scancode];
 	}
-	#ifdef FLX_ALLOW_IMGUI
+#ifdef FLX_ALLOW_IMGUI
 	ImGuiContext* SDL3Window::GetImGuiContext()
 	{
 		return p_ImGuiContext;
