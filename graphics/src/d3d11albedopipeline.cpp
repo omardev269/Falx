@@ -72,7 +72,7 @@ static uint32 g_PixelShaderBytecodeAlbedo[174] = { 1128421444u, 1375268566u, 120
 namespace falx {
 	bit D3D11AlbedoPipeline::Create(IGraphicsDevice* aiRegistoire)
 	{
-		FLX_SMART_CHECK(aiRegistoire != NULL, "Invalid graphics device fed into the albedo pipeline implementation");
+		FLX_RET_SMART_CHECK(aiRegistoire != NULL, "Invalid graphics device fed into the albedo pipeline implementation");
 		{
 			i_Sampler = NULL;
 			i_Texture = NULL;
@@ -83,8 +83,8 @@ namespace falx {
 		}
 		i_Device = (D3D11GraphicsDevice*)aiRegistoire;
 		ID3D11Device* i_D3DDevice = i_Device->GetDevice();
-		FLX_SMART_CHECK_HRESULT(i_D3DDevice->CreateVertexShader(g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), NULL, &i_VertexShader), "Albedo vertex shader creation failed");
-		FLX_SMART_CHECK_HRESULT(i_D3DDevice->CreatePixelShader(g_PixelShaderBytecodeAlbedo, sizeof(g_PixelShaderBytecodeAlbedo), NULL, &i_PixelShader), "Albedo pixel shader creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_D3DDevice->CreateVertexShader(g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), NULL, &i_VertexShader), "Albedo vertex shader creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_D3DDevice->CreatePixelShader(g_PixelShaderBytecodeAlbedo, sizeof(g_PixelShaderBytecodeAlbedo), NULL, &i_PixelShader), "Albedo pixel shader creation failed");
 		{
 			D3D11_INPUT_ELEMENT_DESC m_InputLayoutDesc[2];
 			FLX_ZMEM(&m_InputLayoutDesc, sizeof(D3D11_INPUT_ELEMENT_DESC) * 2);
@@ -93,14 +93,14 @@ namespace falx {
 			m_InputLayoutDesc[1].SemanticName = "TEXCOORD";
 			m_InputLayoutDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 			m_InputLayoutDesc[1].AlignedByteOffset = 12;
-			FLX_SMART_CHECK_HRESULT(i_D3DDevice->CreateInputLayout(m_InputLayoutDesc, 2, g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), &i_InputLayout), "Albedo input layout creation failed");
+			FLX_RET_SMART_CHECK_HRESULT(i_D3DDevice->CreateInputLayout(m_InputLayoutDesc, 2, g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), &i_InputLayout), "Albedo input layout creation failed");
 		}
 		{
 			D3D11_BUFFER_DESC m_ConstantBufferDesc;
 			FLX_ZMEM(&m_ConstantBufferDesc, sizeof(D3D11_BUFFER_DESC));
 			m_ConstantBufferDesc.ByteWidth = (UINT)sizeof(matrix4x4);
 			m_ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			FLX_SMART_CHECK_HRESULT(i_D3DDevice->CreateBuffer(&m_ConstantBufferDesc, NULL, &i_TransformBuffer), "Albedo constant buffer creation failed");
+			FLX_RET_SMART_CHECK_HRESULT(i_D3DDevice->CreateBuffer(&m_ConstantBufferDesc, NULL, &i_TransformBuffer), "Albedo constant buffer creation failed");
 		}
 		{
 			D3D11_TEXTURE2D_DESC m_TextureDesc;
@@ -112,13 +112,13 @@ namespace falx {
 			m_TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			m_TextureDesc.SampleDesc.Count = 1;
 			m_TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-			FLX_SMART_CHECK_HRESULT(i_D3DDevice->CreateTexture2D(&m_TextureDesc, NULL, &i_RenderTexture), "Albedo GBuffer creation failed");
+			FLX_RET_SMART_CHECK_HRESULT(i_D3DDevice->CreateTexture2D(&m_TextureDesc, NULL, &i_RenderTexture), "Albedo GBuffer creation failed");
 		}
 		{
-			FLX_SMART_CHECK_HRESULT(i_D3DDevice->CreateShaderResourceView(i_RenderTexture, NULL, &i_RenderTextureView), "Albedo GBuffer SRV creation failed");
+			FLX_RET_SMART_CHECK_HRESULT(i_D3DDevice->CreateShaderResourceView(i_RenderTexture, NULL, &i_RenderTextureView), "Albedo GBuffer SRV creation failed");
 		}
 		{
-			FLX_SMART_CHECK_HRESULT(i_D3DDevice->CreateRenderTargetView(i_RenderTexture, NULL, &i_RenderTargetView), "Albedo GBuffer RTV creation failed");
+			FLX_RET_SMART_CHECK_HRESULT(i_D3DDevice->CreateRenderTargetView(i_RenderTexture, NULL, &i_RenderTargetView), "Albedo GBuffer RTV creation failed");
 		}
 		return true;
 	}

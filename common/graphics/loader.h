@@ -5,6 +5,7 @@
 #define LOADER_H_FLX
 #include <graphics/graphicsdef.h>
 #include <vector>
+#include <graphics/scene.h>
 
 namespace falx {
 	struct IndividualClump {
@@ -20,5 +21,7 @@ namespace falx {
 		std::vector<uint32> m_ClumpAddresses;
 	};
 	void LoadModel(const char* aPath, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes);
+	bit LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes);
+	bit LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene);
 }
 #endif // !LOADER_H_FLX

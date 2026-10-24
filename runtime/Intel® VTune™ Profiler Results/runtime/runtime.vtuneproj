@@ -301,6 +301,66 @@
      <recursive type="bool">false</recursive>
      <priority type="bool">false</priority>
     </searchDirectory>
+    <searchDirectory>
+     <name>C:\falx\Falx\x64\Debug</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\VC\VCPackages</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\bin\Roslyn</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Team Tools\DiagnosticsHub\Collector</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files (x86)\Windows Kits\10\bin\\x64</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\VC\Linux\bin\ConnectionManagerExe</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\Program Files\Microsoft Visual Studio\18\Community\VC\vcpkg</name>
+     <recursive type="bool">false</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
    </searchCategory>
    <searchCategory>
     <category type="u8_t">2</category>
@@ -342,6 +402,11 @@
     <searchDirectory>
      <name>C:\falx\Falx</name>
      <recursive type="bool">true</recursive>
+     <priority type="bool">false</priority>
+    </searchDirectory>
+    <searchDirectory>
+     <name>C:\falx\Falx\x64\Debug</name>
+     <recursive type="bool">false</recursive>
      <priority type="bool">false</priority>
     </searchDirectory>
    </searchCategory>
@@ -500,6 +565,7 @@
  </vs_search_dirs>
  <All_Configurations-All_Platforms>
   <target_settings>
+   <inherited_state type="bool">true</inherited_state>
    <selected_workload>
     <localhost>launch</localhost>
    </selected_workload>
@@ -508,13 +574,13 @@
      <launch type="pointer" type_id="dasID_cctrl2::ApplicationWorkload" ptr_type="dasID_cctrl2::IWorkload">
       <workload>
        <targetName>launch</targetName>
-       <launch_app.app_to_launch>C:\falx\Falx\x64\Release\runtime.exe</launch_app.app_to_launch>
+       <launch_app.app_to_launch>C:\falx\Falx\x64\Debug\runtime.exe</launch_app.app_to_launch>
        <launch_app.app_parameters></launch_app.app_parameters>
-       <launch_app.environment></launch_app.environment>
        <use_app_dir_as_work_dir type="bool">false</use_app_dir_as_work_dir>
        <launch_app.working_folder>C:\falx\Falx\runtime\</launch_app.working_folder>
        <launch.userappworkdir>C:\falx\Falx\runtime\</launch.userappworkdir>
        <result_directory.path>C:\falx\Falx\runtime\Intel® VTune™ Profiler Results\runtime\r@@@{at}</result_directory.path>
+       <launch_app.environment>_NT_SYMBOL_PAT=</launch_app.environment>
        <context>
         <contextValue>
          <id>allowMultipleRuns</id>
@@ -546,7 +612,7 @@
         </contextValue>
         <contextValue>
          <id>finalizationMode</id>
-         <value>fast</value>
+         <value>full</value>
         </contextValue>
         <contextValue>
          <id>followChild</id>

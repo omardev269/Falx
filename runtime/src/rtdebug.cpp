@@ -47,19 +47,19 @@ void falx::AssertHelper(const char* aExpression, const char* aFile, uint32 aLine
 void falx::Log(const char* aMessage, const char* aFile, uint32 aLine, const char* aFunc)
 {
 #ifdef FLX_WIN32
-	std::string m_Formatted = std::format("{} @ {}:{}: {}", aFile, aFunc, aLine, aMessage);
+	std::string m_Formatted = std::format("{} @ {}:{}: {}\n", aFile, aFunc, aLine, aMessage);
 	OutputDebugStringA(m_Formatted.c_str());
 #else
-	printf("%s", m_Formatted.c_str());
+	printf("%s\n", m_Formatted.c_str());
 #endif // FLX_WIN32
 }
 void falx::Log(std::string aMessage, const char* aFile, uint32 aLine, const char* aFunc)
 {
 #ifdef FLX_WIN32
-	std::string m_Formatted = std::format("{} @ {}:{}: {}", aFile, aFunc, aLine, aMessage);
+	std::string m_Formatted = std::format("{} @ {}:{}: {}\n", aFile, aFunc, aLine, aMessage);
 	OutputDebugStringA(m_Formatted.c_str());
 #else
-	printf("%s", m_Formatted.c_str());
+	printf("%s\n", m_Formatted.c_str());
 #endif // FLX_WIN32
 }
 #else

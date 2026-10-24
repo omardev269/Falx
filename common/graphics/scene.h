@@ -37,9 +37,9 @@ namespace falx
 		virtual void UpdateClump(ClumpID aClump, uint16* apIndexData, ulargeint aCurrentAttemptedAllocationSize) = 0;
 		virtual void DismissClump(ClumpID& aClump) = 0;
 		virtual void DismissObject(ObjectID aObject) = 0;
-		virtual void AlbedoRender(ClumpID aClump) = 0;
-		virtual void AlbedoRender(ObjectID aObject) = 0;
-		virtual void AlbedoRender() = 0;
+		virtual void AlbedoRender(ClumpID aClump, matrix4x4 aPV) = 0;
+		virtual void AlbedoRender(ObjectID aObject, matrix4x4 aPV) = 0;
+		virtual void AlbedoRender(matrix4x4 aPV) = 0;
 		virtual void Dismiss() = 0;
 	};
 	void CreateGraphicsScene(IGraphicsScene*& oiGraphicsScene, IGraphicsDevice* aiGraphicsDevice);

@@ -11,6 +11,8 @@ void falx::Profiler::Initialize()
 {
 	m_LastFrameTime = GetTimeNotSinceFalxStartup();
 	m_Delta = 0;
+	m_SecondTimer = 0;
+	m_TFPS = 0;
 	m_FPS = 0;
 	m_FirstFrame = true;
 }
@@ -24,19 +26,26 @@ void falx::Profiler::EndFrame()
 {
 	largefloat m_Now = GetTimeNotSinceFalxStartup();
 	m_Delta = m_Now - m_LastFrameTime;
-	m_FPS = m_Delta > 0 ? (uint32)(1000.0 / m_Delta) : 0;
+	m_TFPS++;
+	m_SecondTimer += m_Delta;
+	if (m_SecondTimer >= 1.0f)  
+	{
+		m_FPS = m_TFPS;
+		m_TFPS = 0;
+		m_SecondTimer -= 1.0f;
+	}
 	m_FirstFrame = false;
 }
 
 void falx::Profiler::GetDelta(largefloat& oDelta)
 {
-	FLX_SMART_CHECK(!m_FirstFrame, "No frame was ran before querying the profiler delta");
+	FLX_ASSERT(!m_FirstFrame, "No frame was ran before querying the profiler delta");
 	oDelta = m_Delta;
 }
 
 void falx::Profiler::GetFPS(uint32& oFPS)
 {
-	FLX_SMART_CHECK(!m_FirstFrame, "No frame was ran before querying the profiler FPS");
+	FLX_ASSERT(!m_FirstFrame, "No frame was ran before querying the profiler FPS");
 	oFPS = m_FPS;
 }
 

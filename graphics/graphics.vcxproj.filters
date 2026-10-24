@@ -72,6 +72,9 @@
     <ClCompile Include="src\d3d11material.cpp">
       <Filter>core\material\d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="src\convenientObjectLoader.cpp">
+      <Filter>core\loader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\graphics\device.h">

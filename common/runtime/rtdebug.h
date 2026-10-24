@@ -44,4 +44,8 @@ namespace falx {
 #define FLX_SMART_CHECK(aCondition, aError) if (!(aCondition)) { ::falx::AssertHelper(#aCondition, __FILE__, __LINE__, __func__); }
 #endif // FLX_RELEASE
 
+#define FLX_RET_ASSERT(aCondition) do { if (!(aCondition)) { FLX_LOG(#aCondition); return false; } } while (0)
+#define FLX_RET_CHECK(aCondition, aError) do { if (!(aCondition)) { FLX_LOG(aError); return false; } } while (0)
+#define FLX_RET_SMART_CHECK(aCondition, aError) do { if (!(aCondition)) { FLX_LOG(aError); return false; } } while (0)
+
 #endif // !FLX_RTDEBUG_H

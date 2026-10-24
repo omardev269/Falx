@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\convenientObjectLoader.cpp" />
     <ClCompile Include="src\d3d11albedopipeline.cpp" />
     <ClCompile Include="src\d3d11device.cpp" />
     <ClCompile Include="src\d3d11material.cpp" />

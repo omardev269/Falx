@@ -46,7 +46,7 @@ bit falx::D3D11Material::Create(MATERIAL_DESC& aDesc, SamplerMode aSamplerMode, 
 			}
 		}
 		m_SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateSamplerState(&m_SamplerDesc, &i_SamplerState), "Failed to create sampler state");
+		FLX_RET_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateSamplerState(&m_SamplerDesc, &i_SamplerState), "Failed to create sampler state");
 	}
 	{
 		D3D11_TEXTURE2D_DESC m_TextureDesc;
@@ -59,18 +59,18 @@ bit falx::D3D11Material::Create(MATERIAL_DESC& aDesc, SamplerMode aSamplerMode, 
 		m_TextureDesc.SampleDesc.Count = 1;
 		m_TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		if (aDesc.BitmapData == NULL) { // sometimes this is useful
-			FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, NULL, &i_Texture), "Failed to create texture");
+			FLX_RET_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, NULL, &i_Texture), "Failed to create texture");
 		}
 		else {
 			D3D11_SUBRESOURCE_DATA m_SubresourceData;
 			FLX_ZMEM(&m_SubresourceData, sizeof(m_SubresourceData));
 			m_SubresourceData.pSysMem = aDesc.BitmapData;
 			m_SubresourceData.SysMemPitch = aDesc.BitmapSize.x * 4;
-			FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
+			FLX_RET_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
 		}
 	}
 	{
-		FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateShaderResourceView(i_Texture, NULL, &i_TextureView), "Failed to create shader resource view");
+		FLX_RET_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateShaderResourceView(i_Texture, NULL, &i_TextureView), "Failed to create shader resource view");
 	}
 	return true;
 }
@@ -92,8 +92,8 @@ bit falx::D3D11Material::Reset(MATERIAL_DESC& aDesc)
 	m_SubresourceData.SysMemPitch = aDesc.BitmapSize.x * 4;
 	i_TextureView->Release();
 	i_Texture->Release();
-	FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
-	FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateShaderResourceView(i_Texture, NULL, &i_TextureView), "Failed to create shader resource view");
+	FLX_RET_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateTexture2D(&m_TextureDesc, &m_SubresourceData, &i_Texture), "Failed to create texture");
+	FLX_RET_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateShaderResourceView(i_Texture, NULL, &i_TextureView), "Failed to create shader resource view");
 	return true;
 }
 
@@ -131,7 +131,7 @@ bit falx::D3D11Material::Reset(SamplerMode aSamplerMode)
 	}
 	m_SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	i_SamplerState->Release();
-	FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateSamplerState(&m_SamplerDesc, &i_SamplerState), "Failed to create sampler state");
+	FLX_RET_SMART_CHECK_HRESULT(i_GraphicsDevice->i_Device->CreateSamplerState(&m_SamplerDesc, &i_SamplerState), "Failed to create sampler state");
 	return true;
 }
 

@@ -40,9 +40,9 @@ namespace falx
         void UpdateClump(ClumpID aClump, uint16* apIndexData, ulargeint aCurrentAttemptedAllocationSize) override;
         void DismissClump(ClumpID& aClump) override;
         void DismissObject(ObjectID aObject) override;
-        void AlbedoRender(ClumpID aClump) override;
-        void AlbedoRender(ObjectID aObject) override;
-        void AlbedoRender() override;
+        void AlbedoRender(ClumpID aClump, matrix4x4 aPV) override;
+        void AlbedoRender(ObjectID aObject, matrix4x4 aPV) override;
+        void AlbedoRender(matrix4x4 aPV) override;
         void Dismiss() override;
     };
 }

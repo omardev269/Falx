@@ -6,6 +6,14 @@
 #include <d3d11scene.h>
 #include <rtd3d11debug.h>
 #include <d3d11material.h>
+#include <gb_math.h>
+
+static matrix4x4 ComposePVTransform(matrix4x4 aPV, matrix4x4 aTransform)
+{
+	matrix4x4 m_Result;
+	gb_mat4_mul(reinterpret_cast<gbMat4*>(&m_Result), reinterpret_cast<gbMat4*>(&aPV), reinterpret_cast<gbMat4*>(&aTransform));
+	return m_Result;
+}
 
 static uint32 g_VertexShaderBytecodeAlbedo[] = { 1128421444u, 2402879077u, 4141149369u, 3236055827u, 3179830628u, 1u, 1820u, 6u, 56u, 584u,
 1316u, 1440u, 1648u, 1732u, 963538753u, 520u, 520u, 4294836736u, 468u, 52u,
@@ -75,11 +83,11 @@ static uint32 g_PixelShaderBytecodeAlbedo[] = { 1128421444u, 1375268566u, 120037
 
 bit falx::D3D11GraphicsScene::Create(IGraphicsDevice* aiGraphicsDevice)
 {
-	FLX_SMART_CHECK(aiGraphicsDevice != NULL, "Invalid graphics device fed into the scene system implementation");
+	FLX_RET_SMART_CHECK(aiGraphicsDevice != NULL, "Invalid graphics device fed into the scene system implementation");
 	i_GraphicsDevice = (D3D11GraphicsDevice*)aiGraphicsDevice;
 	ID3D11Device* i_Device = i_GraphicsDevice->GetDevice();
-	FLX_SMART_CHECK_HRESULT(i_Device->CreateVertexShader(g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), NULL, &i_AlbedoVertexShader), "Albedo vertex shader creation failed");
-	FLX_SMART_CHECK_HRESULT(i_Device->CreatePixelShader(g_PixelShaderBytecodeAlbedo, sizeof(g_PixelShaderBytecodeAlbedo), NULL, &i_AlbedoPixelShader), "Albedo pixel shader creation failed");
+	FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateVertexShader(g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), NULL, &i_AlbedoVertexShader), "Albedo vertex shader creation failed");
+	FLX_RET_SMART_CHECK_HRESULT(i_Device->CreatePixelShader(g_PixelShaderBytecodeAlbedo, sizeof(g_PixelShaderBytecodeAlbedo), NULL, &i_AlbedoPixelShader), "Albedo pixel shader creation failed");
 	{
 		D3D11_INPUT_ELEMENT_DESC m_InputLayoutDesc[2];
 		FLX_ZMEM(&m_InputLayoutDesc, sizeof(D3D11_INPUT_ELEMENT_DESC) * 2);
@@ -88,14 +96,14 @@ bit falx::D3D11GraphicsScene::Create(IGraphicsDevice* aiGraphicsDevice)
 		m_InputLayoutDesc[1].SemanticName = "TEXCOORD";
 		m_InputLayoutDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 		m_InputLayoutDesc[1].AlignedByteOffset = 12;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateInputLayout(m_InputLayoutDesc, 2, g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), &i_InputLayout), "Albedo input layout creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateInputLayout(m_InputLayoutDesc, 2, g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), &i_InputLayout), "Albedo input layout creation failed");
 	}
 	{
 		D3D11_BUFFER_DESC m_ConstantBufferDesc;
 		FLX_ZMEM(&m_ConstantBufferDesc, sizeof(D3D11_BUFFER_DESC));
 		m_ConstantBufferDesc.ByteWidth = (UINT)sizeof(matrix4x4);
 		m_ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateBuffer(&m_ConstantBufferDesc, NULL, &i_AlbedoConstantBuffer), "Albedo constant buffer creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateBuffer(&m_ConstantBufferDesc, NULL, &i_AlbedoConstantBuffer), "Albedo constant buffer creation failed");
 	}
 	{
 		static const uint32 c_WhitePixel = 0xFFFFFFFFu;
@@ -114,13 +122,13 @@ bit falx::D3D11GraphicsScene::Create(IGraphicsDevice* aiGraphicsDevice)
 		FLX_ZMEM(&m_WhiteTextureData, sizeof(D3D11_SUBRESOURCE_DATA));
 		m_WhiteTextureData.pSysMem = &c_WhitePixel;
 		m_WhiteTextureData.SysMemPitch = sizeof(uint32);
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateTexture2D(&m_WhiteTextureDesc, &m_WhiteTextureData, &i_WhiteTexture), "White texture creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateTexture2D(&m_WhiteTextureDesc, &m_WhiteTextureData, &i_WhiteTexture), "White texture creation failed");
 		D3D11_SHADER_RESOURCE_VIEW_DESC m_WhiteTextureSRVDesc;
 		FLX_ZMEM(&m_WhiteTextureSRVDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 		m_WhiteTextureSRVDesc.Format = m_WhiteTextureDesc.Format;
 		m_WhiteTextureSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		m_WhiteTextureSRVDesc.Texture2D.MipLevels = 1;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateShaderResourceView(i_WhiteTexture, &m_WhiteTextureSRVDesc, &i_WhiteTextureSRV), "White texture SRV creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateShaderResourceView(i_WhiteTexture, &m_WhiteTextureSRVDesc, &i_WhiteTextureSRV), "White texture SRV creation failed");
 	}
 	return true;
 }
@@ -167,7 +175,7 @@ void falx::D3D11GraphicsScene::DismissObject(ObjectID aObject)
 	m_Objects[aObject.ID - 1] = NULL;
 }
 
-void falx::D3D11GraphicsScene::AlbedoRender(ClumpID aClump)
+void falx::D3D11GraphicsScene::AlbedoRender(ClumpID aClump, matrix4x4 aPV)
 {
 	FLX_SMART_CHECK(aClump.FatherID != NULL, "Invalid object referenced in graphics scene - CSNULL");
 	FLX_SMART_CHECK(aClump.FatherID <= m_Objects.size(), "Invalid object referenced in graphics scene - CSOVFL");
@@ -196,11 +204,12 @@ void falx::D3D11GraphicsScene::AlbedoRender(ClumpID aClump)
 		i_ImmediateContext->IASetIndexBuffer(p_Object->i_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 		i_ImmediateContext->IASetVertexBuffers(0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
 	}
-	i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &r_ClClump.Metadata.Transform, 0, 0);
+	matrix4x4 m_PVTransform = ComposePVTransform(aPV, r_ClClump.Metadata.Transform);
+	i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
 	i_ImmediateContext->DrawIndexed(r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
 }
 
-void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject)
+void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject, matrix4x4 aPV)
 {
 	FLX_SMART_CHECK(aObject.ID != NULL, "Invalid object referenced in graphics scene - CSNULL");
 	FLX_SMART_CHECK(aObject.ID <= m_Objects.size(), "Invalid object referenced in graphics scene - CSOVFL");
@@ -222,7 +231,8 @@ void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject)
 		if (r_ClClump.Metadata.Parent.ID == NULL) {
 			continue;
 		}
-		i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &r_ClClump.Metadata.Transform, 0, 0);
+		matrix4x4 m_PVTransform = ComposePVTransform(aPV, r_ClClump.Metadata.Transform);
+		i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
 		if (r_ClClump.Metadata.iMaterial == NULL) {
 			i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
 		}
@@ -234,7 +244,7 @@ void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject)
 	}
 }
 
-void falx::D3D11GraphicsScene::AlbedoRender()
+void falx::D3D11GraphicsScene::AlbedoRender(matrix4x4 aPV)
 {
 	for (size_t i = 0; i < m_Objects.size(); i++) {
 		if (m_Objects[i] == NULL) {
@@ -257,7 +267,8 @@ void falx::D3D11GraphicsScene::AlbedoRender()
 			if (r_ClClump.Metadata.Parent.ID == NULL) {
 				continue;
 			}
-			i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &r_ClClump.Metadata.Transform, 0, 0);
+			matrix4x4 m_PVTransform = ComposePVTransform(aPV, r_ClClump.Metadata.Transform);
+			i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
 			if (r_ClClump.Metadata.iMaterial == NULL) {
 				i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
 			}

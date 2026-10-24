@@ -12,6 +12,8 @@ namespace falx {
 	class Profiler : public IUpdateable {
 		largefloat m_LastFrameTime;
 		largefloat m_Delta;
+		largefloat m_SecondTimer;
+		uint32 m_TFPS;
 		uint32 m_FPS;
 		bit m_FirstFrame;
 	public:

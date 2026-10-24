@@ -4,6 +4,9 @@
 #include "d3d11device.h"
 #include "rtd3d11debug.h"
 #include <string>
+#ifdef FLX_DEBUG
+#include <runtime/exposition.h>
+#endif // FLX_DEBUG
 #ifdef FLX_ALLOW_IMGUI
 #include <backends/imgui_impl_dx11.h>
 #endif // FLX_ALLOW_IMGUI
@@ -70,27 +73,27 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 	if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
 #endif // FLX_DEBUG
 		if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context))) {
-			FLX_LOG("Direct3D11 hardware acceleration unavailable\n");
+			FLX_LOG("Direct3D11 hardware acceleration unavailable");
 			m_Warp = true;
 			if (FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_WARP, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &i_Device, &m_FeatureLevel, &i_Context)) || !aAllowSoftwareRendering) {
-				FLX_LOG("Direct3D11 device creation failed\n");
+				FLX_LOG("Direct3D11 device creation failed");
 				return false;
 			}
 		}
 	}
-	FLX_LOG("Successfully created a Direct3D11 device (thankfully!)\n");
+	FLX_LOG("Successfully created a Direct3D11 device (thankfully!)");
 	if (!m_Warp) {
 		if (m_FeatureLevel >= D3D_FEATURE_LEVEL_10_1) {
 			m_MsaaLevels = 2;
-			FLX_SMART_CHECK_HRESULT(i_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 2, &m_MsaaQuality), "Device does not support 2x MSAA while reporting feature level >= 10_1");
-			FLX_LOG("MSAA enabled\n");
+			FLX_RET_SMART_CHECK_HRESULT(i_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 2, &m_MsaaQuality), "Device does not support 2x MSAA while reporting feature level >= 10_1");
+			FLX_LOG("MSAA enabled");
 		}
 		else {
-			FLX_LOG("MSAA disabled\n");
+			FLX_LOG("MSAA disabled");
 		}
 	}
 	else {
-		FLX_LOG("MSAA disabled\n");
+		FLX_LOG("MSAA disabled");
 	}
 	{
 		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;
@@ -102,16 +105,16 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_SwapChainDesc.SampleDesc.Quality = m_MsaaQuality - 1;
 		m_SwapChainDesc.OutputWindow = h_Window;
 		m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		FLX_SMART_CHECK_HRESULT(i_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&i_DxgiDevice), "DXGI device retrieval failed");
-		FLX_SMART_CHECK_HRESULT(i_DxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&i_Adapter), "DXGI adapter retrieval failed");
-		FLX_SMART_CHECK_HRESULT(i_Adapter->GetParent(__uuidof(IDXGIFactory), (void**)&i_Factory), "DXGI factory retrieval failed");
-		FLX_SMART_CHECK_HRESULT(i_Factory->CreateSwapChain(i_Device, &m_SwapChainDesc, &i_SwapChain), "DXGI swapchain creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&i_DxgiDevice), "DXGI device retrieval failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_DxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&i_Adapter), "DXGI adapter retrieval failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Adapter->GetParent(__uuidof(IDXGIFactory), (void**)&i_Factory), "DXGI factory retrieval failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Factory->CreateSwapChain(i_Device, &m_SwapChainDesc, &i_SwapChain), "DXGI swapchain creation failed");
 	}
 	{
 		// create main RTV
 		ID3D11Texture2D* i_DxgiTexture;
-		FLX_SMART_CHECK_HRESULT(i_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&i_DxgiTexture), "DXGI RTO texture recieval failed");
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateRenderTargetView(i_DxgiTexture, NULL, &i_DxgiRepView), "Main RTV creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&i_DxgiTexture), "DXGI RTO texture recieval failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateRenderTargetView(i_DxgiTexture, NULL, &i_DxgiRepView), "Main RTV creation failed");
 		i_DxgiTexture->Release();
 	}
 	{
@@ -129,8 +132,8 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_DepthTextureDesc.Usage = D3D11_USAGE_DEFAULT;
 		m_DepthTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		ID3D11Texture2D* i_DepthTexture;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateTexture2D(&m_DepthTextureDesc, NULL, &i_DepthTexture), "Depth texture creation failed");
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateDepthStencilView(i_DepthTexture, NULL, &i_Dsv), "Depth stencil view creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateTexture2D(&m_DepthTextureDesc, NULL, &i_DepthTexture), "Depth texture creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateDepthStencilView(i_DepthTexture, NULL, &i_Dsv), "Depth stencil view creation failed");
 		i_DepthTexture->Release();
 	}
 	{
@@ -144,7 +147,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		m_BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateBlendState(&m_BlendDesc, &i_BlendState), "Blend state creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateBlendState(&m_BlendDesc, &i_BlendState), "Blend state creation failed");
 	}
 	{
 		D3D11_BUFFER_DESC m_RectangleVertexBufferDesc;
@@ -160,7 +163,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 			1.0f, -1.0f, 0.0f, 1.0f, 1.0f
 		};
 		m_RectangleVertexBufferData.pSysMem = m_RectangleVertices;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateBuffer(&m_RectangleVertexBufferDesc, &m_RectangleVertexBufferData, &i_RectangleVertexBuffer), "Rectangle vertex buffer creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateBuffer(&m_RectangleVertexBufferDesc, &m_RectangleVertexBufferData, &i_RectangleVertexBuffer), "Rectangle vertex buffer creation failed");
 	}
 	{
 		D3D11_BUFFER_DESC m_RectangleIndexBufferDesc;
@@ -174,7 +177,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 			3, 2, 0
 		};
 		m_RectangleIndexBufferData.pSysMem = m_RectangleIndices;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateBuffer(&m_RectangleIndexBufferDesc, &m_RectangleIndexBufferData, &i_RectangleIndexBuffer), "Rectangle index buffer creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateBuffer(&m_RectangleIndexBufferDesc, &m_RectangleIndexBufferData, &i_RectangleIndexBuffer), "Rectangle index buffer creation failed");
 	}
 	{
 		D3D11_DEPTH_STENCIL_DESC m_DssEnabledDesc;
@@ -182,17 +185,17 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_DssEnabledDesc.DepthEnable = TRUE;
 		m_DssEnabledDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		m_DssEnabledDesc.DepthFunc = D3D11_COMPARISON_LESS;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateDepthStencilState(&m_DssEnabledDesc, &i_DssEnabled), "Depth stencil state creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateDepthStencilState(&m_DssEnabledDesc, &i_DssEnabled), "Depth stencil state creation failed");
 	}
 	{
 		D3D11_DEPTH_STENCIL_DESC m_DssDisabledDesc;
 		FLX_ZMEM(&m_DssDisabledDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 		m_DssDisabledDesc.DepthEnable = FALSE;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateDepthStencilState(&m_DssDisabledDesc, &i_DssDisabled), "Depth stencil state creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateDepthStencilState(&m_DssDisabledDesc, &i_DssDisabled), "Depth stencil state creation failed");
 	}
 	{
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateVertexShader(g_D3D11VertexShaderBytecode, sizeof(g_D3D11VertexShaderBytecode), NULL, &i_RectangleVertexShader), "Rectangle vertex shader creation failed");
-		FLX_SMART_CHECK_HRESULT(i_Device->CreatePixelShader(g_D3D11PixelShaderBytecode, sizeof(g_D3D11PixelShaderBytecode), NULL, &i_RectanglePixelShader), "Rectangle pixel shader creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateVertexShader(g_D3D11VertexShaderBytecode, sizeof(g_D3D11VertexShaderBytecode), NULL, &i_RectangleVertexShader), "Rectangle vertex shader creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreatePixelShader(g_D3D11PixelShaderBytecode, sizeof(g_D3D11PixelShaderBytecode), NULL, &i_RectanglePixelShader), "Rectangle pixel shader creation failed");
 	}
 	{
 		D3D11_INPUT_ELEMENT_DESC m_RectangleInputLayoutDesc[2];
@@ -202,7 +205,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_RectangleInputLayoutDesc[1].SemanticName = "TEXCOORD";
 		m_RectangleInputLayoutDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 		m_RectangleInputLayoutDesc[1].AlignedByteOffset = 12;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateInputLayout(m_RectangleInputLayoutDesc, 2, g_D3D11VertexShaderBytecode, sizeof(g_D3D11VertexShaderBytecode), &i_RectangleInputLayout), "Rectangle input layout creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateInputLayout(m_RectangleInputLayoutDesc, 2, g_D3D11VertexShaderBytecode, sizeof(g_D3D11VertexShaderBytecode), &i_RectangleInputLayout), "Rectangle input layout creation failed");
 	}
 	{
 		D3D11_RASTERIZER_DESC m_RasterizerDesc;
@@ -210,7 +213,7 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 		m_RasterizerDesc.CullMode = D3D11_CULL_BACK;
 		m_RasterizerDesc.FillMode = D3D11_FILL_SOLID;
 		m_RasterizerDesc.FrontCounterClockwise = TRUE;
-		FLX_SMART_CHECK_HRESULT(i_Device->CreateRasterizerState(&m_RasterizerDesc, &i_RasterizerState), "Rasterizer state creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateRasterizerState(&m_RasterizerDesc, &i_RasterizerState), "Rasterizer state creation failed");
 	}
 #ifdef FLX_ALLOW_IMGUI
 	ImGui::SetCurrentContext(aiWindow->GetImGuiContext());
@@ -241,6 +244,16 @@ void falx::D3D11GraphicsDevice::BeginFrame()
 		m_Viewport.MaxDepth = 1.0f;
 		i_Context->RSSetViewports(1, &m_Viewport);
 	}
+#ifdef FLX_DEBUG
+	ImGui::SetNextWindowPos(ImVec2(m_Viewport.Width - 100.0f, 20.0f));
+	ImGui::Begin("Profiler", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings);
+	uint32 m_FPS = 0;
+	if (!falx::g_iProfiler->IsFirstFrame()) {
+		falx::g_iProfiler->GetFPS(m_FPS);
+	}
+	ImGui::Text("FPS: %u", m_FPS);
+	ImGui::End();
+#endif // FLX_DEBUG
 }
 
 void falx::D3D11GraphicsDevice::SetDepth(bit aEnableDepth)
