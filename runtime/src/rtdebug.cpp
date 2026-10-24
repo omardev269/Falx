@@ -40,7 +40,7 @@ void falx::AssertHelper(const char* aExpression, const char* aFile, uint32 aLine
 	std::string m_Message = std::format("{}\n@\n{}:{}:{}\nPress OK to debug", aExpression, aFile, aFunc, aLine);
 #else
 	std::string m_Message = std::format("{}\n@\n{}:{}:{}", aExpression, aFile, aFunc, aLine);
-#endif
+#endif // FLX_WIN32
 	::Fatality(m_Message.c_str(), "Assertion FAILED", FLX_ERROR_ASSERT);
 	DbgBreak();
 }

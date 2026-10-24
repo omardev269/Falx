@@ -9,7 +9,7 @@
 #include <vector>
 #ifdef FLX_ACCELERATED
 #include <emmintrin.h>
-#endif
+#endif // FLX_ACCELERATED
 #include <gb.h>
 #include <gb_math.h>
 
@@ -26,7 +26,7 @@ static bit IsBrushOpaque(const falx::Brush& aBrush)
 		__m128i m_Eq = _mm_cmpeq_epi8(_mm_or_si128(m_Pixels, c_ForceRGB), _mm_set1_epi32(-1));
 		if (_mm_movemask_epi8(m_Eq) != 0xFFFF) return false;
 	}
-#endif
+#endif // FLX_ACCELERATED
 	for (; i < m_Count; i++) {
 		if (aBrush.m_Bitmap[i].c[3] != 255) return false;
 	}

@@ -18,11 +18,12 @@ struct AnimatorPhase {
 	std::string m_GuideInfo;
 	float3 m_StartPos;
 	float3 m_EndPos;
-	float3 m_Rotation;
+	float3 m_StartRotation;
+	float3 m_EndRotation;
 };
 static std::vector<AnimatorPhase> g_AnimatorPhases = {
-	{ 0, 3.5f, 0, "This is a smart classroom",{ 3, -2.5, -3 },{ 2.5, -1.5, -2.5 },{ 0, 45, 0 } },
-	{ 0, 3.5f, 0, "This classroom is energy-sufficient\nIt uses solar panels!" ,{ 2.5, -4.75, -0.5 },{ 2.25, -4.25, -0.25 },{ 0, 90, 0 }, }
+	{ 0, 3.5f, 0, "This is a smart classroom",{ 3, -2.5, -3 },{ 2.5, -1.5, -2.5 },{ 0, 45, 0 },{ 0, 45, 0 } },
+	{ 0, 3.5f, 0, "This classroom is energy-sufficient\nIt uses solar panels!" ,{ 2.5, -5.75, -0.5 },{ 2.25, -4.75, -0.25 },{ 0, 90, 20 },{ 0, 90, 0 }, }
 };
 static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
@@ -36,7 +37,7 @@ static FLX_INLINEFUNC largefloat GetDeltaTime() {
 	if (!falx::g_iProfiler->IsFirstFrame()) {
 		falx::g_iProfiler->GetDelta(m_Delta);
 	}
-#endif
+#endif // FLX_RELEASE
 	return m_Delta;
 }
 void Game::Start() {
@@ -76,10 +77,13 @@ bit Game::PerFrame() {
 			else {
 				float32 m_Timeframe = m_Phase.m_Elapsed / m_Phase.m_Duration;
 				float3 m_CurrentPos;
+				float3 m_CurrentRotation;
 				FLX_ZMEM(&m_CurrentPos, sizeof(m_CurrentPos));
+				FLX_ZMEM(&m_CurrentRotation, sizeof(m_CurrentRotation));
 				gb_vec3_lerp((gbVec3*)&m_CurrentPos, ToGbVec3(m_Phase.m_StartPos), ToGbVec3(m_Phase.m_EndPos), m_Timeframe);
+				gb_vec3_lerp((gbVec3*)&m_CurrentRotation, ToGbVec3(m_Phase.m_StartRotation), ToGbVec3(m_Phase.m_EndRotation), m_Timeframe);
 				g_Camera.Teleport(m_CurrentPos);
-				g_Camera.SetRotation(m_Phase.m_Rotation);
+				g_Camera.SetRotation(m_CurrentRotation);
 				g_GuideInfo = m_Phase.m_GuideInfo;
 			}
 		}
