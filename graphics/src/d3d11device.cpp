@@ -83,10 +83,10 @@ bit falx::D3D11GraphicsDevice::Create(bit aAllowSoftwareRendering, IWindow* aiWi
 	}
 	FLX_LOG("Successfully created a Direct3D11 device (thankfully!)");
 	if (!m_Warp) {
-		//if (m_FeatureLevel >= D3D_FEATURE_LEVEL_10_1) {
-		if (false) { // Disabled 
+		if (m_FeatureLevel >= D3D_FEATURE_LEVEL_10_1) {
+		//if (false) { // Disabled 
 			m_MsaaLevels = 2;
-			FLX_RET_SMART_CHECK_HRESULT(i_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 2, &m_MsaaQuality), "Device does not support 2x MSAA while reporting feature level >= 10_1");
+			FLX_RET_SMART_CHECK_HRESULT(i_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 2, &m_MsaaQuality), "Device does not support 2x MSAA while reporting feature level >= 10_0");
 			FLX_LOG("MSAA enabled");
 		}
 		else {
