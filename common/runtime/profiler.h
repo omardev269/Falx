@@ -21,9 +21,9 @@ namespace falx {
 		void Initialize();
 		void BeginFrame() override;
 		void EndFrame() override;
-		// throws an exception if no frame was ran
+		// throws an assert if no frame was ran
 		void GetDelta(largefloat& oDelta);
-		// throws an exception if no frame was ran
+		// throws an assert if no frame was ran
 		void GetFPS(uint32& oFPS);
 		// gets if this is the first frame
 		bool IsFirstFrame();

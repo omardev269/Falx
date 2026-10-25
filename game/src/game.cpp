@@ -24,7 +24,7 @@ struct AnimatorPhase {
 static std::vector<AnimatorPhase> g_AnimatorPhases = {
 	{ 0, 3.5f, 0, "This is a smart classroom",{ 3, -2.5, -3 },{ 2.5, -1.5, -2.5 },{ 0, 45, 0 },{ 0, 45, 0 } },
 	{ 0, 3.5f, 0, "This classroom is energy-sufficient\nIt uses solar panels!" ,{ 2.5, -5.75, -0.5 },{ 2.25, -4.75, -0.25 },{ 0, 90, 20 },{ 0, 90, 0 }, },
-	{ 0, 4.0f, 0, "For the comfort of the students\nThis classroom is equipped with a modern AC\nIt works only when the temperature is\nless than 20(c) or higher than 22(c)",{ 2, -2.65, -2.0 },{ 1.5, -2.45, -2 },{ 0, 270, 0 },{ 0,270,15 } }
+	{ 0, 4.0f, 0, "For the comfort of the students\nThis classroom is equipped with a modern AC\nIt works only when the temperature is\nless than 20(c) or higher than 22(c)",{ 1.5, -2.45, -2.0 },{ 2, -2.65, -2 },{ 0, 270, 15 },{ 0,270,0 } }
 };
 static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
@@ -55,11 +55,7 @@ bit g_Admin = false;
 bit g_Free = false;
 std::string g_GuideInfo;
 static FLX_INLINEFUNC gbVec3 ToGbVec3(float3 aVec) {
-	gbVec3 m_Result;
-	m_Result.x = aVec.x;
-	m_Result.y = aVec.y;
-	m_Result.z = aVec.z;
-	return m_Result;
+	return { aVec.x, aVec.y, aVec.z };
 }
 bit Game::PerFrame() {
 	using namespace falx;
