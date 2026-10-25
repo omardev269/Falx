@@ -11,6 +11,10 @@
 #include <gb.h>
 #include <gb_math.h>
 #include <vector>
+#include <runtime/time.h>
+#define MINIAUDIO_IMPLEMENTATION
+#include <miniaudio.h>
+
 struct AnimatorPhase {
 	largefloat m_StartTime;
 	float32 m_Duration;
@@ -24,11 +28,12 @@ struct AnimatorPhase {
 static std::vector<AnimatorPhase> g_AnimatorPhases = {
 	{ 0, 3.5f, 0, "This is a smart classroom",{ 3, -2.5, -3 },{ 2.5, -1.5, -2.5 },{ 0, 45, 0 },{ 0, 45, 0 } },
 	{ 0, 3.5f, 0, "This classroom is energy-sufficient\nIt uses solar panels!" ,{ 2.5, -5.75, -0.5 },{ 2.25, -4.75, -0.25 },{ 0, 90, 20 },{ 0, 90, 0 }, },
-	{ 0, 4.0f, 0, "For the comfort of the students\nThis classroom is equipped with a modern AC\nIt works only when the temperature is\nless than 20(c) or higher than 22(c)",{ 1.5, -2.45, -2.0 },{ 2, -2.65, -2 },{ 0, 270, 15 },{ 0,270,0 } }
+	{ 0, 5.0f, 0, "For the comfort of the students\nThis classroom is equipped with a modern AC\nIt works only when the temperature is\nless than 20(c) or higher than 22(c)",{ 1.5, -2.45, -2.0 },{ 2, -2.65, -2 },{ 0, 270, 15 },{ 0,270,0 } }
 };
 static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
 static falx::FreeflyCamera g_Camera;
+static ma_engine g_hSoundEngine;
 static FLX_INLINEFUNC largefloat GetDeltaTime() {
 #ifdef FLX_RELEASE
 	largefloat m_Delta = 0;
@@ -43,6 +48,11 @@ static FLX_INLINEFUNC largefloat GetDeltaTime() {
 }
 void Game::Start() {
 	using namespace falx;
+	// sound engine startup
+	{
+		ma_result m_Result = ma_engine_init(NULL, &g_hSoundEngine);
+		FLX_SMART_CHECK(m_Result == MA_SUCCESS, "Failed to initialize sound engine");
+	}
 	g_Camera.Reset();
 	CreateGraphicsScene(g_iScene, g_iGdev);
 	FLX_SMART_CHECK(g_iScene != NULL, "Failed to create graphics scene");
@@ -53,7 +63,23 @@ void Game::Start() {
 matrix4x4 g_PV;
 bit g_Admin = false;
 bit g_Free = false;
+largefloat g_LastSecPoll = 0;
+largefloat g_LastHMinPoll = 0;
+int32 g_Temperature = 23;
 std::string g_GuideInfo;
+static FLX_INLINEFUNC void PerSec() {
+	if (g_Temperature > 22 || g_Temperature < 20) {
+		ma_engine_play_sound(&g_hSoundEngine, "ac.wav", NULL);
+	}
+}
+static FLX_INLINEFUNC void PerMin() {
+	if (g_Temperature < 20) {
+		g_Temperature++;
+	}
+	if (g_Temperature > 22) {
+		g_Temperature--;
+	}
+}
 static FLX_INLINEFUNC gbVec3 ToGbVec3(float3 aVec) {
 	return { aVec.x, aVec.y, aVec.z };
 }
@@ -162,6 +188,7 @@ bit Game::PerFrame() {
 			g_Camera.GetRotation(m_Rotation);
 			ImGui::Text("Camera Position: { %.2f, %.2f, %.2f }", m_Position.x, m_Position.y, m_Position.z);
 			ImGui::Text("Camera Rotation: { %.2f, %.2f, %.2f }", m_Rotation.x, m_Rotation.y, m_Rotation.z);
+			ImGui::SliderInt("Temperature", &g_Temperature, 15, 30);
 		}
 		else {
 			//g_Free = false;
@@ -173,6 +200,17 @@ bit Game::PerFrame() {
 		g_Camera.Update(GetDeltaTime(), 70, 800.0f / 600.0f);
 		g_Camera.GetMatrix(g_PV);
 	}
+	// air conditioner functionality
+	{
+		if (g_LastSecPoll + 1.0f < GetTime()) {
+			g_LastSecPoll = GetTime();
+			PerSec();
+		}
+		if (g_LastHMinPoll + 30.0f < GetTime()) {
+			g_LastHMinPoll = GetTime();
+			PerMin();
+		}
+	}
 	g_iScene->AlbedoRender(g_PV);
 	return m_Continue;
 }
@@ -181,4 +219,5 @@ void Game::Quit() {
 	using namespace falx;
 	g_iScene->Dismiss();
 	delete g_iScene;
+	ma_engine_uninit(&g_hSoundEngine);
 }
