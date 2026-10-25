@@ -46,6 +46,18 @@ static FLX_INLINEFUNC largefloat GetDeltaTime() {
 #endif // FLX_RELEASE
 	return m_Delta;
 }
+static FLX_INLINEFUNC uint32 GetFPS() {
+#ifdef FLX_RELEASE
+	uint32 m_Delta = 0;
+	falx::g_iProfiler->GetFPS(m_Delta);
+#else
+	uint32 m_Delta = 0;
+	if (!falx::g_iProfiler->IsFirstFrame()) {
+		falx::g_iProfiler->GetFPS(m_Delta);
+	}
+#endif // FLX_RELEASE
+	return m_Delta;
+}
 void Game::Start() {
 	using namespace falx;
 	// sound engine startup
@@ -188,6 +200,8 @@ bit Game::PerFrame() {
 			g_Camera.GetRotation(m_Rotation);
 			ImGui::Text("Camera Position: { %.2f, %.2f, %.2f }", m_Position.x, m_Position.y, m_Position.z);
 			ImGui::Text("Camera Rotation: { %.2f, %.2f, %.2f }", m_Rotation.x, m_Rotation.y, m_Rotation.z);
+			uint32 m_FPS = GetFPS();
+			ImGui::Text("FPS: %u", m_FPS);
 			ImGui::SliderInt("Temperature", &g_Temperature, 15, 30);
 		}
 		else {
