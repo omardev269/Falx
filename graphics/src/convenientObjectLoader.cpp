@@ -13,7 +13,7 @@
 #include <gb.h>
 #include <gb_math.h>
 
-static bit IsBrushOpaque(const falx::Brush& aBrush)
+static FLX_INLINEFUNC bit IsBrushOpaque(const falx::Brush& aBrush)
 {
 	if (aBrush.m_Bitmap == NULL) return true;
 	size_t m_Count = static_cast<size_t>(aBrush.m_Width) * aBrush.m_Height;
@@ -34,7 +34,7 @@ static bit IsBrushOpaque(const falx::Brush& aBrush)
 }
 
 namespace falx {
-	static bit LoadModelIntoSceneWithTransform(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes, matrix4x4 aTransform)
+	static FLX_INLINEFUNC bit LoadModelIntoSceneWithTransform(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes, matrix4x4 aTransform)
 {
 	if (aPath == NULL || aiScene == NULL) return false;
 	LoadModel(aPath, oClumps, oBrushes);

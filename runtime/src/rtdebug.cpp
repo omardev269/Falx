@@ -24,7 +24,7 @@ void falx::DbgBreak()
 }
 #endif // FLX_DEBUG
 
-static void Fatality(const char* aProblem, const char* aTitle, uint16 aExitCode) {
+static FLX_INLINEFUNC void Fatality(const char* aProblem, const char* aTitle, uint16 aExitCode) {
 #ifdef FLX_WIN32
 	MessageBoxA(NULL, aProblem, aTitle, MB_OK | MB_ICONERROR);
 #else

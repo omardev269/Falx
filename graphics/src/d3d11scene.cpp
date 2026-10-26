@@ -8,7 +8,98 @@
 #include <d3d11material.h>
 #include <gb_math.h>
 
-static matrix4x4 ComposePVTransform(matrix4x4 aPV, matrix4x4 aTransform)
+#ifdef FLX_DEBUG
+#define FLX_D3D11_WRAPPER static
+#else
+#define FLX_D3D11_WRAPPER static FLX_INLINEFUNC
+#endif // FLX_DEBUG
+
+FLX_D3D11_WRAPPER HRESULT Direct3D11_Device_CreateVertexShader(ID3D11Device* aiDevice, const void* aBytecode, SIZE_T aBytecodeLength, ID3D11ClassLinkage* aiClassLinkage, ID3D11VertexShader** aoiShader)
+{
+	return aiDevice->CreateVertexShader(aBytecode, aBytecodeLength, aiClassLinkage, aoiShader);
+}
+
+FLX_D3D11_WRAPPER HRESULT Direct3D11_Device_CreatePixelShader(ID3D11Device* aiDevice, const void* aBytecode, SIZE_T aBytecodeLength, ID3D11ClassLinkage* aiClassLinkage, ID3D11PixelShader** aoiShader)
+{
+	return aiDevice->CreatePixelShader(aBytecode, aBytecodeLength, aiClassLinkage, aoiShader);
+}
+
+FLX_D3D11_WRAPPER HRESULT Direct3D11_Device_CreateInputLayout(ID3D11Device* aiDevice, const D3D11_INPUT_ELEMENT_DESC* aElementDescs, UINT aNumElements, const void* aBytecode, SIZE_T aBytecodeLength, ID3D11InputLayout** aoiLayout)
+{
+	return aiDevice->CreateInputLayout(aElementDescs, aNumElements, aBytecode, aBytecodeLength, aoiLayout);
+}
+
+FLX_D3D11_WRAPPER HRESULT Direct3D11_Device_CreateBuffer(ID3D11Device* aiDevice, const D3D11_BUFFER_DESC* aDesc, const D3D11_SUBRESOURCE_DATA* aInitialData, ID3D11Buffer** aoiBuffer)
+{
+	return aiDevice->CreateBuffer(aDesc, aInitialData, aoiBuffer);
+}
+
+FLX_D3D11_WRAPPER HRESULT Direct3D11_Device_CreateTexture2D(ID3D11Device* aiDevice, const D3D11_TEXTURE2D_DESC* aDesc, const D3D11_SUBRESOURCE_DATA* aInitialData, ID3D11Texture2D** aoiTexture)
+{
+	return aiDevice->CreateTexture2D(aDesc, aInitialData, aoiTexture);
+}
+
+FLX_D3D11_WRAPPER HRESULT Direct3D11_Device_CreateShaderResourceView(ID3D11Device* aiDevice, ID3D11Resource* aiResource, const D3D11_SHADER_RESOURCE_VIEW_DESC* aDesc, ID3D11ShaderResourceView** aoiView)
+{
+	return aiDevice->CreateShaderResourceView(aiResource, aDesc, aoiView);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_PSSetShader(ID3D11DeviceContext* aiContext, ID3D11PixelShader* aiShader, ID3D11ClassInstance* const* aiClassInstances, UINT aNumClassInstances)
+{
+	aiContext->PSSetShader(aiShader, aiClassInstances, aNumClassInstances);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_PSSetShaderResources(ID3D11DeviceContext* aiContext, UINT aStartSlot, UINT aNumViews, ID3D11ShaderResourceView* const* aiViews)
+{
+	aiContext->PSSetShaderResources(aStartSlot, aNumViews, aiViews);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_PSSetSamplers(ID3D11DeviceContext* aiContext, UINT aStartSlot, UINT aNumSamplers, ID3D11SamplerState* const* aiSamplers)
+{
+	aiContext->PSSetSamplers(aStartSlot, aNumSamplers, aiSamplers);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_VSSetShader(ID3D11DeviceContext* aiContext, ID3D11VertexShader* aiShader, ID3D11ClassInstance* const* aiClassInstances, UINT aNumClassInstances)
+{
+	aiContext->VSSetShader(aiShader, aiClassInstances, aNumClassInstances);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_VSSetConstantBuffers(ID3D11DeviceContext* aiContext, UINT aStartSlot, UINT aNumBuffers, ID3D11Buffer* const* aiBuffers)
+{
+	aiContext->VSSetConstantBuffers(aStartSlot, aNumBuffers, aiBuffers);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_IASetPrimitiveTopology(ID3D11DeviceContext* aiContext, D3D11_PRIMITIVE_TOPOLOGY aTopology)
+{
+	aiContext->IASetPrimitiveTopology(aTopology);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_IASetInputLayout(ID3D11DeviceContext* aiContext, ID3D11InputLayout* aiLayout)
+{
+	aiContext->IASetInputLayout(aiLayout);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_IASetIndexBuffer(ID3D11DeviceContext* aiContext, ID3D11Buffer* aiBuffer, DXGI_FORMAT aFormat, UINT aOffset)
+{
+	aiContext->IASetIndexBuffer(aiBuffer, aFormat, aOffset);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_IASetVertexBuffers(ID3D11DeviceContext* aiContext, UINT aStartSlot, UINT aNumBuffers, ID3D11Buffer* const* aiBuffers, const UINT* aStrides, const UINT* aOffsets)
+{
+	aiContext->IASetVertexBuffers(aStartSlot, aNumBuffers, aiBuffers, aStrides, aOffsets);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_UpdateSubresource(ID3D11DeviceContext* aiContext, ID3D11Resource* aiResource, UINT aSubresource, const D3D11_BOX* aBox, const void* aSrcData, UINT aSrcRowPitch, UINT aSrcDepthPitch)
+{
+	aiContext->UpdateSubresource(aiResource, aSubresource, aBox, aSrcData, aSrcRowPitch, aSrcDepthPitch);
+}
+
+FLX_D3D11_WRAPPER void Direct3D11_Context_DrawIndexed(ID3D11DeviceContext* aiContext, UINT aIndexCount, UINT aStartIndexLocation, INT aBaseVertexLocation)
+{
+	aiContext->DrawIndexed(aIndexCount, aStartIndexLocation, aBaseVertexLocation);
+}
+
+static FLX_INLINEFUNC matrix4x4 ComposePVTransform(matrix4x4 aPV, matrix4x4 aTransform)
 {
 	matrix4x4 m_Result;
 	gb_mat4_mul(reinterpret_cast<gbMat4*>(&m_Result), reinterpret_cast<gbMat4*>(&aPV), reinterpret_cast<gbMat4*>(&aTransform));
@@ -86,8 +177,8 @@ bit falx::D3D11GraphicsScene::Create(IGraphicsDevice* aiGraphicsDevice)
 	FLX_RET_SMART_CHECK(aiGraphicsDevice != NULL, "Invalid graphics device fed into the scene system implementation");
 	i_GraphicsDevice = (D3D11GraphicsDevice*)aiGraphicsDevice;
 	ID3D11Device* i_Device = i_GraphicsDevice->GetDevice();
-	FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateVertexShader(g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), NULL, &i_AlbedoVertexShader), "Albedo vertex shader creation failed");
-	FLX_RET_SMART_CHECK_HRESULT(i_Device->CreatePixelShader(g_PixelShaderBytecodeAlbedo, sizeof(g_PixelShaderBytecodeAlbedo), NULL, &i_AlbedoPixelShader), "Albedo pixel shader creation failed");
+	FLX_RET_SMART_CHECK_HRESULT(Direct3D11_Device_CreateVertexShader(i_Device, g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), NULL, &i_AlbedoVertexShader), "Albedo vertex shader creation failed");
+	FLX_RET_SMART_CHECK_HRESULT(Direct3D11_Device_CreatePixelShader(i_Device, g_PixelShaderBytecodeAlbedo, sizeof(g_PixelShaderBytecodeAlbedo), NULL, &i_AlbedoPixelShader), "Albedo pixel shader creation failed");
 	{
 		D3D11_INPUT_ELEMENT_DESC m_InputLayoutDesc[2];
 		FLX_ZMEM(&m_InputLayoutDesc, sizeof(D3D11_INPUT_ELEMENT_DESC) * 2);
@@ -96,14 +187,14 @@ bit falx::D3D11GraphicsScene::Create(IGraphicsDevice* aiGraphicsDevice)
 		m_InputLayoutDesc[1].SemanticName = "TEXCOORD";
 		m_InputLayoutDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 		m_InputLayoutDesc[1].AlignedByteOffset = 12;
-		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateInputLayout(m_InputLayoutDesc, 2, g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), &i_InputLayout), "Albedo input layout creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(Direct3D11_Device_CreateInputLayout(i_Device, m_InputLayoutDesc, 2, g_VertexShaderBytecodeAlbedo, sizeof(g_VertexShaderBytecodeAlbedo), &i_InputLayout), "Albedo input layout creation failed");
 	}
 	{
 		D3D11_BUFFER_DESC m_ConstantBufferDesc;
 		FLX_ZMEM(&m_ConstantBufferDesc, sizeof(D3D11_BUFFER_DESC));
 		m_ConstantBufferDesc.ByteWidth = (UINT)sizeof(matrix4x4);
 		m_ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateBuffer(&m_ConstantBufferDesc, NULL, &i_AlbedoConstantBuffer), "Albedo constant buffer creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(Direct3D11_Device_CreateBuffer(i_Device, &m_ConstantBufferDesc, NULL, &i_AlbedoConstantBuffer), "Albedo constant buffer creation failed");
 	}
 	{
 		static const uint32 c_WhitePixel = 0xFFFFFFFFu;
@@ -122,13 +213,13 @@ bit falx::D3D11GraphicsScene::Create(IGraphicsDevice* aiGraphicsDevice)
 		FLX_ZMEM(&m_WhiteTextureData, sizeof(D3D11_SUBRESOURCE_DATA));
 		m_WhiteTextureData.pSysMem = &c_WhitePixel;
 		m_WhiteTextureData.SysMemPitch = sizeof(uint32);
-		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateTexture2D(&m_WhiteTextureDesc, &m_WhiteTextureData, &i_WhiteTexture), "White texture creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(Direct3D11_Device_CreateTexture2D(i_Device, &m_WhiteTextureDesc, &m_WhiteTextureData, &i_WhiteTexture), "White texture creation failed");
 		D3D11_SHADER_RESOURCE_VIEW_DESC m_WhiteTextureSRVDesc;
 		FLX_ZMEM(&m_WhiteTextureSRVDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 		m_WhiteTextureSRVDesc.Format = m_WhiteTextureDesc.Format;
 		m_WhiteTextureSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		m_WhiteTextureSRVDesc.Texture2D.MipLevels = 1;
-		FLX_RET_SMART_CHECK_HRESULT(i_Device->CreateShaderResourceView(i_WhiteTexture, &m_WhiteTextureSRVDesc, &i_WhiteTextureSRV), "White texture SRV creation failed");
+		FLX_RET_SMART_CHECK_HRESULT(Direct3D11_Device_CreateShaderResourceView(i_Device, i_WhiteTexture, &m_WhiteTextureSRVDesc, &i_WhiteTextureSRV), "White texture SRV creation failed");
 	}
 	return true;
 }
@@ -144,14 +235,14 @@ falx::ObjectID falx::D3D11GraphicsScene::CreateObject(ulargeint aVertexBufferByt
 		FLX_ZMEM(&m_VertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
 		m_VertexBufferDesc.ByteWidth = (UINT)aVertexBufferBytes;
 		m_VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->GetDevice()->CreateBuffer(&m_VertexBufferDesc, NULL, &i_VertexBuffer), "Vertex buffer initialization failed");
+		FLX_SMART_CHECK_HRESULT(Direct3D11_Device_CreateBuffer(i_GraphicsDevice->GetDevice(), &m_VertexBufferDesc, NULL, &i_VertexBuffer), "Vertex buffer initialization failed");
 	}
 	{
 		D3D11_BUFFER_DESC m_IndexBufferDesc;
 		FLX_ZMEM(&m_IndexBufferDesc, sizeof(D3D11_BUFFER_DESC));
 		m_IndexBufferDesc.ByteWidth = (UINT)aIndexBufferBytes;
 		m_IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		FLX_SMART_CHECK_HRESULT(i_GraphicsDevice->GetDevice()->CreateBuffer(&m_IndexBufferDesc, NULL, &i_IndexBuffer), "Index buffer initialization failed");
+		FLX_SMART_CHECK_HRESULT(Direct3D11_Device_CreateBuffer(i_GraphicsDevice->GetDevice(), &m_IndexBufferDesc, NULL, &i_IndexBuffer), "Index buffer initialization failed");
 	}
 	D3D11Object* m_Object = new D3D11Object;
 	m_Object->i_IndexBuffer = i_IndexBuffer;
@@ -186,27 +277,27 @@ void falx::D3D11GraphicsScene::AlbedoRender(ClumpID aClump, matrix4x4 aPV)
 	FLX_SMART_CHECK(aClump.ID != NULL && aClump.ID <= p_Object->m_Clumps.size(), "Invalid clump referenced in graphics scene");
 	const ClearClumpD3D11& r_ClClump = p_Object->m_Clumps[aClump.ID - 1];
 	ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
-	i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);
+	Direct3D11_Context_PSSetShader(i_ImmediateContext, i_AlbedoPixelShader, NULL, 0);
 	if (r_ClClump.Metadata.iMaterial == NULL) {
-		i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
+		Direct3D11_Context_PSSetShaderResources(i_ImmediateContext, 0, 1, &i_WhiteTextureSRV);
 	}
 	else {
-		i_ImmediateContext->PSSetShaderResources(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
-		i_ImmediateContext->PSSetSamplers(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
+		Direct3D11_Context_PSSetShaderResources(i_ImmediateContext, 0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
+		Direct3D11_Context_PSSetSamplers(i_ImmediateContext, 0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
 	}
-	i_ImmediateContext->VSSetShader(i_AlbedoVertexShader, NULL, 0);
-	i_ImmediateContext->VSSetConstantBuffers(0, 1, &i_AlbedoConstantBuffer);
-	i_ImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	i_ImmediateContext->IASetInputLayout(i_InputLayout);
+	Direct3D11_Context_VSSetShader(i_ImmediateContext, i_AlbedoVertexShader, NULL, 0);
+	Direct3D11_Context_VSSetConstantBuffers(i_ImmediateContext, 0, 1, &i_AlbedoConstantBuffer);
+	Direct3D11_Context_IASetPrimitiveTopology(i_ImmediateContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	Direct3D11_Context_IASetInputLayout(i_ImmediateContext, i_InputLayout);
 	{
 		UINT m_Stride = 20;
 		UINT m_Offset = 0;
-		i_ImmediateContext->IASetIndexBuffer(p_Object->i_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-		i_ImmediateContext->IASetVertexBuffers(0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
+		Direct3D11_Context_IASetIndexBuffer(i_ImmediateContext, p_Object->i_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+		Direct3D11_Context_IASetVertexBuffers(i_ImmediateContext, 0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
 	}
 	matrix4x4 m_PVTransform = ComposePVTransform(aPV, r_ClClump.Metadata.Transform);
-	i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
-	i_ImmediateContext->DrawIndexed(r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
+	Direct3D11_Context_UpdateSubresource(i_ImmediateContext, i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
+	Direct3D11_Context_DrawIndexed(i_ImmediateContext, r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
 }
 
 void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject, matrix4x4 aPV)
@@ -216,31 +307,31 @@ void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject, matrix4x4 aPV)
 	D3D11Object* p_Object = m_Objects[aObject.ID - 1];
 	FLX_SMART_CHECK(p_Object != NULL, "Object referenced in graphics scene was already dismissed - CSDISM");
 	ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
-	i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);
-	i_ImmediateContext->VSSetShader(i_AlbedoVertexShader, NULL, 0);
-	i_ImmediateContext->VSSetConstantBuffers(0, 1, &i_AlbedoConstantBuffer);
-	i_ImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	i_ImmediateContext->IASetInputLayout(i_InputLayout);
+	Direct3D11_Context_PSSetShader(i_ImmediateContext, i_AlbedoPixelShader, NULL, 0);
+	Direct3D11_Context_VSSetShader(i_ImmediateContext, i_AlbedoVertexShader, NULL, 0);
+	Direct3D11_Context_VSSetConstantBuffers(i_ImmediateContext, 0, 1, &i_AlbedoConstantBuffer);
+	Direct3D11_Context_IASetPrimitiveTopology(i_ImmediateContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	Direct3D11_Context_IASetInputLayout(i_ImmediateContext, i_InputLayout);
 	{
 		UINT m_Stride = 20;
 		UINT m_Offset = 0;
-		i_ImmediateContext->IASetIndexBuffer(p_Object->i_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-		i_ImmediateContext->IASetVertexBuffers(0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
+		Direct3D11_Context_IASetIndexBuffer(i_ImmediateContext, p_Object->i_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+		Direct3D11_Context_IASetVertexBuffers(i_ImmediateContext, 0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
 	}
 	for (const ClearClumpD3D11& r_ClClump : p_Object->m_Clumps) {
 		if (r_ClClump.Metadata.Parent.ID == NULL) {
 			continue;
 		}
 		matrix4x4 m_PVTransform = ComposePVTransform(aPV, r_ClClump.Metadata.Transform);
-		i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
+		Direct3D11_Context_UpdateSubresource(i_ImmediateContext, i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
 		if (r_ClClump.Metadata.iMaterial == NULL) {
-			i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
+			Direct3D11_Context_PSSetShaderResources(i_ImmediateContext, 0, 1, &i_WhiteTextureSRV);
 		}
 		else {
-			i_ImmediateContext->PSSetShaderResources(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
-			i_ImmediateContext->PSSetSamplers(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
+			Direct3D11_Context_PSSetShaderResources(i_ImmediateContext, 0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
+			Direct3D11_Context_PSSetSamplers(i_ImmediateContext, 0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
 		}
-		i_ImmediateContext->DrawIndexed(r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
+		Direct3D11_Context_DrawIndexed(i_ImmediateContext, r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
 	}
 }
 
@@ -252,31 +343,31 @@ void falx::D3D11GraphicsScene::AlbedoRender(matrix4x4 aPV)
 		}
 		D3D11Object* p_Object = m_Objects[i];
 		ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
-		i_ImmediateContext->PSSetShader(i_AlbedoPixelShader, NULL, 0);
-		i_ImmediateContext->VSSetShader(i_AlbedoVertexShader, NULL, 0);
-		i_ImmediateContext->VSSetConstantBuffers(0, 1, &i_AlbedoConstantBuffer);
-		i_ImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		i_ImmediateContext->IASetInputLayout(i_InputLayout);
+		Direct3D11_Context_PSSetShader(i_ImmediateContext, i_AlbedoPixelShader, NULL, 0);
+		Direct3D11_Context_VSSetShader(i_ImmediateContext, i_AlbedoVertexShader, NULL, 0);
+		Direct3D11_Context_VSSetConstantBuffers(i_ImmediateContext, 0, 1, &i_AlbedoConstantBuffer);
+		Direct3D11_Context_IASetPrimitiveTopology(i_ImmediateContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		Direct3D11_Context_IASetInputLayout(i_ImmediateContext, i_InputLayout);
 		{
 			UINT m_Stride = 20;
 			UINT m_Offset = 0;
-			i_ImmediateContext->IASetIndexBuffer(p_Object->i_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-			i_ImmediateContext->IASetVertexBuffers(0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
+			Direct3D11_Context_IASetIndexBuffer(i_ImmediateContext, p_Object->i_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+			Direct3D11_Context_IASetVertexBuffers(i_ImmediateContext, 0, 1, &p_Object->i_VertexBuffer, &m_Stride, &m_Offset);
 		}
 		for (const ClearClumpD3D11& r_ClClump : p_Object->m_Clumps) {
 			if (r_ClClump.Metadata.Parent.ID == NULL) {
 				continue;
 			}
 			matrix4x4 m_PVTransform = ComposePVTransform(aPV, r_ClClump.Metadata.Transform);
-			i_ImmediateContext->UpdateSubresource(i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
+			Direct3D11_Context_UpdateSubresource(i_ImmediateContext, i_AlbedoConstantBuffer, 0, NULL, &m_PVTransform, 0, 0);
 			if (r_ClClump.Metadata.iMaterial == NULL) {
-				i_ImmediateContext->PSSetShaderResources(0, 1, &i_WhiteTextureSRV);
+				Direct3D11_Context_PSSetShaderResources(i_ImmediateContext, 0, 1, &i_WhiteTextureSRV);
 			}
 			else {
-				i_ImmediateContext->PSSetShaderResources(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
-				i_ImmediateContext->PSSetSamplers(0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
+				Direct3D11_Context_PSSetShaderResources(i_ImmediateContext, 0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_TextureView);
+				Direct3D11_Context_PSSetSamplers(i_ImmediateContext, 0, 1, &((D3D11Material*)(r_ClClump.Metadata.iMaterial))->i_SamplerState);
 			}
-			i_ImmediateContext->DrawIndexed(r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
+			Direct3D11_Context_DrawIndexed(i_ImmediateContext, r_ClClump.Metadata.NumIndices, r_ClClump.Metadata.StartIndex, 0);
 		}
 	}
 }
@@ -300,7 +391,7 @@ static FLX_INLINEFUNC void UploadBytes(ID3D11DeviceContext* aiContext, ID3D11Buf
 	m_Box.right = (UINT)(aOffset + aBytes);
 	m_Box.bottom = 1;
 	m_Box.back = 1;
-	aiContext->UpdateSubresource(aiBuffer, 0, &m_Box, apData, 0, 0);
+	Direct3D11_Context_UpdateSubresource(aiContext, aiBuffer, 0, &m_Box, apData, 0, 0);
 }
 
 falx::ClumpID falx::D3D11GraphicsScene::CreateClump(CLUMP_METADATA aMetadata, float32* apVertexStartData, uint16* apIndexStartData)

@@ -8,7 +8,7 @@
 #endif // FLX_ALLOW_IMGUI
 namespace falx {
 	// Converts a falx::Key to its SDL_Scancode (SDL_SCANCODE_UNKNOWN if unmapped)
-	static SDL_Scancode KeyToScancode(Key aKey)
+	static FLX_INLINEFUNC SDL_Scancode KeyToScancode(Key aKey)
 	{
 		if (aKey >= Key::A && aKey <= Key::Z)
 			return (SDL_Scancode)(SDL_SCANCODE_A + ((int)aKey - (int)Key::A));
@@ -37,7 +37,7 @@ namespace falx {
 		}
 	}
 	// Converts a falx::MouseButton to its SDL button index (0 if unmapped)
-	static int MouseButtonToSDL(MouseButton aButton)
+	static FLX_INLINEFUNC int MouseButtonToSDL(MouseButton aButton)
 	{
 		switch (aButton) {
 		case MouseButton::Left: return SDL_BUTTON_LEFT;
@@ -88,7 +88,7 @@ namespace falx {
 	{
 		return m_ShouldClose;
 	}
-	static bool RawKey(Key aKey)
+	static FLX_INLINEFUNC bool RawKey(Key aKey)
 	{
 		SDL_Scancode m_Scancode = KeyToScancode(aKey);
 		if (m_Scancode == SDL_SCANCODE_UNKNOWN) {
@@ -97,7 +97,7 @@ namespace falx {
 		const bool* m_Scancodes = SDL_GetKeyboardState(NULL);
 		return m_Scancodes[m_Scancode];
 	}
-	static bool RawMouseButton(MouseButton aButton)
+	static FLX_INLINEFUNC bool RawMouseButton(MouseButton aButton)
 	{
 		int m_Button = MouseButtonToSDL(aButton);
 		if (m_Button == 0) {

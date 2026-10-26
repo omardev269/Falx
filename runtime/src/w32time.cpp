@@ -15,7 +15,7 @@ namespace falx {
 		FLX_SMART_CHECK(QueryPerformanceCounter(&g_Initial), "QueryPerformanceCounter Failed\nAre you sure you are on a version of Microsoft Windows >= XP?");
 	};
 	// converts performance counter ticks to seconds
-	static largefloat TicksToSeconds(LONGLONG aTicks) {
+	static FLX_INLINEFUNC largefloat TicksToSeconds(LONGLONG aTicks) {
 		return static_cast<largefloat>(aTicks) / static_cast<largefloat>(g_Frequency.QuadPart);
 	}
 	largefloat GetTime() {
