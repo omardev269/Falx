@@ -7,6 +7,9 @@
 #include <rtd3d11debug.h>
 #include <d3d11material.h>
 #include <gb_math.h>
+#include <algorithm>
+#include <cstring>
+#include <unordered_map>
 
 #ifdef FLX_DEBUG
 #define FLX_D3D11_WRAPPER static
@@ -337,17 +340,17 @@ void falx::D3D11GraphicsScene::AlbedoRender(ObjectID aObject, matrix4x4 aPV)
 
 void falx::D3D11GraphicsScene::AlbedoRender(matrix4x4 aPV)
 {
+	ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
+	Direct3D11_Context_PSSetShader(i_ImmediateContext, i_AlbedoPixelShader, NULL, 0);
+	Direct3D11_Context_VSSetShader(i_ImmediateContext, i_AlbedoVertexShader, NULL, 0);
+	Direct3D11_Context_VSSetConstantBuffers(i_ImmediateContext, 0, 1, &i_AlbedoConstantBuffer);
+	Direct3D11_Context_IASetPrimitiveTopology(i_ImmediateContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	Direct3D11_Context_IASetInputLayout(i_ImmediateContext, i_InputLayout);
 	for (size_t i = 0; i < m_Objects.size(); i++) {
 		if (m_Objects[i] == NULL) {
 			continue;
 		}
 		D3D11Object* p_Object = m_Objects[i];
-		ID3D11DeviceContext* i_ImmediateContext = i_GraphicsDevice->GetContext();
-		Direct3D11_Context_PSSetShader(i_ImmediateContext, i_AlbedoPixelShader, NULL, 0);
-		Direct3D11_Context_VSSetShader(i_ImmediateContext, i_AlbedoVertexShader, NULL, 0);
-		Direct3D11_Context_VSSetConstantBuffers(i_ImmediateContext, 0, 1, &i_AlbedoConstantBuffer);
-		Direct3D11_Context_IASetPrimitiveTopology(i_ImmediateContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		Direct3D11_Context_IASetInputLayout(i_ImmediateContext, i_InputLayout);
 		{
 			UINT m_Stride = 20;
 			UINT m_Offset = 0;
@@ -392,6 +395,63 @@ static FLX_INLINEFUNC void UploadBytes(ID3D11DeviceContext* aiContext, ID3D11Buf
 	m_Box.bottom = 1;
 	m_Box.back = 1;
 	Direct3D11_Context_UpdateSubresource(aiContext, aiBuffer, 0, &m_Box, apData, 0, 0);
+}
+
+void falx::D3D11GraphicsScene::AssessGroupSimilarity(D3D11Object* apObject)
+{
+	FLX_SMART_CHECK(apObject != NULL, "Invalid object fed into group similarity assessment");
+	apObject->m_TransformSimilarClumps.clear();
+	apObject->m_NonTransformSimilarClumps.clear();
+	apObject->m_MaterialSimilarClumps.clear();
+	apObject->m_NonMaterialSimilarClumps.clear();
+	const std::vector<ClearClumpD3D11>& r_Clumps = apObject->m_Clumps;
+	std::vector<size_t> m_Live;
+	m_Live.reserve(r_Clumps.size());
+	for (size_t i = 0; i < r_Clumps.size(); i++) {
+		if (r_Clumps[i].Metadata.Parent.ID != NULL) {
+			m_Live.push_back(i);
+		}
+	}
+	if (m_Live.empty()) {
+		return;
+	}
+	const ulargeint m_FatherID = r_Clumps[m_Live[0]].Metadata.Parent.ID;
+	{
+		// a clump is transform-similar when another live clump has a bit-identical transform
+		std::vector<size_t> m_Sorted = m_Live;
+		auto f_Compare = [&r_Clumps](size_t aLeft, size_t aRight) {
+			return memcmp(&r_Clumps[aLeft].Metadata.Transform, &r_Clumps[aRight].Metadata.Transform, sizeof(matrix4x4)) < 0;
+		};
+		std::sort(m_Sorted.begin(), m_Sorted.end(), f_Compare);
+		std::vector<bit> m_Similar(r_Clumps.size(), false);
+		for (size_t i = 0; i < m_Sorted.size();) {
+			size_t m_End = i + 1;
+			while (m_End < m_Sorted.size() && !f_Compare(m_Sorted[i], m_Sorted[m_End])) {
+				m_End++;
+			}
+			if (m_End - i > 1) {
+				for (size_t j = i; j < m_End; j++) {
+					m_Similar[m_Sorted[j]] = true;
+				}
+			}
+			i = m_End;
+		}
+		for (size_t m_Index : m_Live) {
+			ClumpID m_Id = { m_FatherID, m_Index + 1 };
+			(m_Similar[m_Index] ? apObject->m_TransformSimilarClumps : apObject->m_NonTransformSimilarClumps).push_back(m_Id);
+		}
+	}
+	{
+		// a clump is material-similar when another live clump uses the same material
+		std::unordered_map<IMaterial*, size_t> m_MaterialCounts;
+		for (size_t m_Index : m_Live) {
+			m_MaterialCounts[r_Clumps[m_Index].Metadata.iMaterial]++;
+		}
+		for (size_t m_Index : m_Live) {
+			ClumpID m_Id = { m_FatherID, m_Index + 1 };
+			(m_MaterialCounts[r_Clumps[m_Index].Metadata.iMaterial] > 1 ? apObject->m_MaterialSimilarClumps : apObject->m_NonMaterialSimilarClumps).push_back(m_Id);
+		}
+	}
 }
 
 falx::ClumpID falx::D3D11GraphicsScene::CreateClump(CLUMP_METADATA aMetadata, float32* apVertexStartData, uint16* apIndexStartData)
@@ -453,6 +513,7 @@ void falx::D3D11GraphicsScene::UpdateClump(ClumpID aClump, uint16* apIndexData, 
 void falx::D3D11GraphicsScene::DismissClump(ClumpID& aClump)
 {
 	aClump.ID = 0;
+	AssessGroupSimilarity(m_Objects[aClump.FatherID - 1]);
 }
 
 void falx::D3D11GraphicsScene::Dismiss()

@@ -182,6 +182,9 @@
     <ClInclude Include="src\d3d11scene.h" />
     <ClInclude Include="src\rtd3d11debug.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\d3d11scene_tail.tmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

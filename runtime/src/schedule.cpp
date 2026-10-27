@@ -24,7 +24,7 @@ namespace falx {
 
 static FLX_INLINEFUNC void InitWindowSubsystem() {
 	using namespace falx;
-	CreateWindowNW(g_iWindow, "AlhamdullIllah!", { 800, 600 });
+	CreateWindowNW(g_iWindow, FLX_GAME_NAME, { 800, 600 });
 	FLX_SMART_CHECK(g_iWindow != nullptr, "Window creation failed");
 	g_IUpdateables.push_back(g_iWindow);
 }

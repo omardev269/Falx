@@ -120,4 +120,7 @@
       <Filter>core\material\d3d11</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\d3d11scene_tail.tmp" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,17 @@
+-r
+C:\falx\Falx\runtime\Intel® VTune™ Profiler Results\runtime\r036hs
+--stack-stitching
+--data-limit-mb=1000
+--disk-space-limit=0
+--mrte-type=java,dotnet,python
+--itt-domains=all
+--stack-unwind-limit=8388608
+--itt-config=frame
+--itt-config=task,event,counter
+--stackwalk=offline
+--mrte-mode=auto
+--type=cpu:stack
+--interval=10
+--app-working-dir=C:\falx\Falx\runtime\
+--
+C:\falx\Falx\x64\Release\runtime.exe
