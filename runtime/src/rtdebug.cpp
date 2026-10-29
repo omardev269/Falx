@@ -27,6 +27,9 @@ void falx::DbgBreak()
 static FLX_INLINEFUNC void Fatality(const char* aProblem, const char* aTitle, uint16 aExitCode) {
 #ifdef FLX_WIN32
 	MessageBoxA(NULL, aProblem, aTitle, MB_OK | MB_ICONERROR);
+#ifdef FLX_DEBUG
+	::falx::DbgBreak();
+#endif // FLX_DEBUG
 #else
 	printf("%s\n%s\n", aTitle, aProblem);
 #endif // FLX_WIN32
@@ -42,7 +45,6 @@ void falx::AssertHelper(const char* aExpression, const char* aFile, uint32 aLine
 	std::string m_Message = std::format("{}\n@\n{}:{}:{}", aExpression, aFile, aFunc, aLine);
 #endif // FLX_WIN32
 	::Fatality(m_Message.c_str(), "Assertion FAILED", FLX_ERROR_ASSERT);
-	DbgBreak();
 }
 void falx::Log(const char* aMessage, const char* aFile, uint32 aLine, const char* aFunc)
 {

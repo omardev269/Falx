@@ -1,11 +1,12 @@
 // BismIllahIRRahmaanIRRaheem
 /* sample game class implementation */
-
+#if 1
 #include <runtime/game.h>
 #include <runtime/exposition.h>
 #include <graphics/loader.h>
 #include <graphics/scene.h>
 #include <graphics/freefly.h>
+#include <graphics/animator.h>
 #include <imgui.h>
 #include <graphics/graphicsdef.h>
 #include <gb.h>
@@ -34,6 +35,7 @@ static uint32 g_AnimatorPhaseIndex = 0;
 static falx::IGraphicsScene* g_iScene;
 static falx::FreeflyCamera g_Camera;
 static ma_engine g_hSoundEngine;
+static falx::Animator* g_pAnimator;
 static FLX_INLINEFUNC largefloat GetDeltaTime() {
 #ifdef FLX_RELEASE
 	largefloat m_Delta = 0;
@@ -71,6 +73,8 @@ void Game::Start() {
 	FLX_SMART_CHECK(LoadModelIntoScene("c2.glb", g_iScene), "Failed to load model0 into scene");
 	FLX_SMART_CHECK(LoadModelIntoScene("spanel.glb", g_iScene), "Failed to load model1 into scene");
 	FLX_SMART_CHECK(LoadModelIntoScene("ac.glb", g_iScene, { -3,2.6,1.75 }, { 0,90,0 }), "Failed to load model2 into scene");
+	g_pAnimator = new falx::Animator;
+	FLX_SMART_CHECK(g_pAnimator->Create(g_iScene, "test.fbx"), "Failed to create animator");
 }
 matrix4x4 g_PV;
 bit g_Admin = false;
@@ -84,7 +88,7 @@ static FLX_INLINEFUNC void PerSec() {
 		ma_engine_play_sound(&g_hSoundEngine, "ac.wav", NULL);
 	}
 }
-static FLX_INLINEFUNC void PerMin() {
+static FLX_INLINEFUNC void PerMin() { // it's actually per 30 sec
 	if (g_Temperature < 20) {
 		g_Temperature++;
 	}
@@ -225,13 +229,26 @@ bit Game::PerFrame() {
 			PerMin();
 		}
 	}
-	g_iScene->AlbedoRender(g_PV);
+	// draw
+	{
+		ObjectID m_ObjectID = {};
+		g_pAnimator->GetObjectID(m_ObjectID);
+		g_iScene->AlbedoRenderExcept(m_ObjectID, g_PV);
+		gbVec3 m_Translate = { 0,0.25,-2 };
+		matrix4x4 m_STransform = {};
+		matrix4x4 m_NTransform = {};
+		gb_mat4_translate((gbMat4*)&m_STransform, m_Translate);
+		gb_mat4_mul((gbMat4*)&m_NTransform, (gbMat4*)&g_PV, (gbMat4*)&m_STransform);
+		g_pAnimator->Render(m_NTransform, GetDeltaTime());
+	}
 	return m_Continue;
 }
 
 void Game::Quit() {
 	using namespace falx;
+	delete g_pAnimator;
 	g_iScene->Dismiss();
 	delete g_iScene;
 	ma_engine_uninit(&g_hSoundEngine);
 }
+#endif

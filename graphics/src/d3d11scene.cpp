@@ -375,6 +375,23 @@ void falx::D3D11GraphicsScene::AlbedoRender(matrix4x4 aPV)
 	}
 }
 
+void falx::D3D11GraphicsScene::AlbedoRenderExcept(ObjectID aObject, matrix4x4 aPV)
+{
+	for (size_t i = 0; i < m_Objects.size(); i++) {
+		if (m_Objects[i] == NULL || (aObject.ID != NULL && aObject.ID == i + 1)) {
+			continue;
+		}
+		D3D11Object* p_Object = m_Objects[i];
+		ObjectID m_ObjectID = { i + 1 };
+		AlbedoRender(m_ObjectID, aPV);
+	}
+}
+
+falx::IGraphicsDevice* falx::D3D11GraphicsScene::GetParent()
+{
+	return i_GraphicsDevice;
+}
+
 static falx::ClearClumpD3D11* GetClump(std::vector<falx::D3D11Object*>& aObjects, falx::ClumpID aClump)
 {
 	FLX_SMART_CHECK(aClump.FatherID != NULL && aClump.FatherID <= aObjects.size(), "Invalid clump parent object referenced in graphics scene");

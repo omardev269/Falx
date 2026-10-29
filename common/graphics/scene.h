@@ -35,6 +35,8 @@ namespace falx
 		virtual void UpdateClumpNumIndices(ClumpID aClump, uint32 aNumIndices) = 0;
 		virtual void UpdateClump(ClumpID aClump, float32* apVertexData, ulargeint aCurrentAttemptedAllocationSize) = 0;
 		virtual void UpdateClump(ClumpID aClump, uint16* apIndexData, ulargeint aCurrentAttemptedAllocationSize) = 0;
+		virtual void AlbedoRenderExcept(ObjectID aObject, matrix4x4 aPV) = 0;
+		virtual IGraphicsDevice* GetParent() = 0;
 		virtual void DismissClump(ClumpID& aClump) = 0;
 		virtual void DismissObject(ObjectID aObject) = 0;
 		virtual void AlbedoRender(ClumpID aClump, matrix4x4 aPV) = 0;

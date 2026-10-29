@@ -4,6 +4,8 @@
 #include <runtime/enginedef.h>
 #ifndef FLX_WIN32
 #include <gb.h>
+#include <threads.h>
+#include <time.h>
 namespace falx {
 	static largefloat g_Initial;
 	void InitializeTimeInt() {
@@ -21,8 +23,11 @@ namespace falx {
 		aLastTime = m_CurrentTime;
 	}
 	void SleepSeconds(largefloat aSeconds) {
-		largefloat m_Target = static_cast<largefloat>(gb_time_now()) + aSeconds;
-		while (static_cast<largefloat>(gb_time_now()) <= m_Target);
+		if (aSeconds <= 0) return;
+		struct timespec m_Duration;
+		m_Duration.tv_sec = static_cast<time_t>(aSeconds);
+		m_Duration.tv_nsec = static_cast<long>((aSeconds - static_cast<largefloat>(m_Duration.tv_sec)) * 1000000000.0);
+		while (thrd_sleep(&m_Duration, &m_Duration) == -1);
 	}
 } 
 #endif // !FLX_WIN32

@@ -48,6 +48,8 @@ namespace falx
 		void AlbedoRender(ClumpID aClump, matrix4x4 aPV) override;
 		void AlbedoRender(ObjectID aObject, matrix4x4 aPV) override;
 		void AlbedoRender(matrix4x4 aPV) override;
+		void AlbedoRenderExcept(ObjectID aObject, matrix4x4 aPV) override;
+		IGraphicsDevice* GetParent() override;
 		void Dismiss() override;
 	};
 }

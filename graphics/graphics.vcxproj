@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animator.cpp" />
     <ClCompile Include="src\convenientObjectLoader.cpp" />
     <ClCompile Include="src\d3d11albedopipeline.cpp" />
     <ClCompile Include="src\d3d11device.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\graphics\animator.h" />
     <ClInclude Include="..\common\graphics\corepipeline.h" />
     <ClInclude Include="..\common\graphics\device.h" />
     <ClInclude Include="..\common\graphics\freefly.h" />

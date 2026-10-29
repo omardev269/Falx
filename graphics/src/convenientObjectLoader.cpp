@@ -34,7 +34,7 @@ static FLX_INLINEFUNC bit IsBrushOpaque(const falx::Brush& aBrush)
 }
 
 namespace falx {
-	static FLX_INLINEFUNC bit LoadModelIntoSceneWithTransform(const char* aPath, IGraphicsScene* aiScene, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes, matrix4x4 aTransform)
+	static FLX_INLINEFUNC bit LoadModelIntoSceneWithTransform(const char* aPath, IGraphicsScene* aiScene, ObjectID& oObjectID, std::vector<IndividualClump>& oClumps, std::vector<Brush>& oBrushes, matrix4x4 aTransform)
 {
 	if (aPath == NULL || aiScene == NULL) return false;
 	LoadModel(aPath, oClumps, oBrushes);
@@ -115,6 +115,7 @@ namespace falx {
 			&m_Verts[m_Meta.StartVertexBufferBytes / sizeof(float32)],
 			&m_Indices[m_Meta.StartIndex]);
 	}
+	oObjectID = m_NewObject;
 	return true;
 }
 }
@@ -123,7 +124,8 @@ bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, std::ve
 {
 	matrix4x4 m_Identity = {};
 	gb_mat4_identity((gbMat4*)&m_Identity);
-	return LoadModelIntoSceneWithTransform(aPath, aiScene, oClumps, oBrushes, m_Identity);
+	ObjectID m_ObjectID = {};
+	return LoadModelIntoSceneWithTransform(aPath, aiScene, m_ObjectID, oClumps, oBrushes, m_Identity);
 }
 
 bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene)
@@ -137,6 +139,25 @@ bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene)
 	}
 	for (Brush& m_Brush : m_Brushes) {
 		free(m_Brush.m_Bitmap);
+	}
+	return m_Result;
+}
+
+bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, ObjectID& oObjectID)
+{
+	std::vector<IndividualClump> m_Clumps;
+	std::vector<Brush> m_Brushes;
+	matrix4x4 m_Identity = {};
+	gb_mat4_identity((gbMat4*)&m_Identity);
+	bit m_Result = LoadModelIntoSceneWithTransform(aPath, aiScene, oObjectID, m_Clumps, m_Brushes, m_Identity);
+	if (m_Result) {
+		for (IndividualClump& m_Clump : m_Clumps) {
+			free(m_Clump.m_ModelVerts);
+			free(m_Clump.m_ModelIndices);
+		}
+		for (Brush& m_Brush : m_Brushes) {
+			free(m_Brush.m_Bitmap);
+		}
 	}
 	return m_Result;
 }
@@ -162,7 +183,8 @@ bit falx::LoadModelIntoScene(const char* aPath, IGraphicsScene* aiScene, float3 
 
 	std::vector<IndividualClump> m_Clumps;
 	std::vector<Brush> m_Brushes;
-	bit m_Result = LoadModelIntoSceneWithTransform(aPath, aiScene, m_Clumps, m_Brushes, *reinterpret_cast<matrix4x4*>(&m_Transform));
+	ObjectID m_ObjectID = {};
+	bit m_Result = LoadModelIntoSceneWithTransform(aPath, aiScene, m_ObjectID, m_Clumps, m_Brushes, *reinterpret_cast<matrix4x4*>(&m_Transform));
 	for (IndividualClump& m_Clump : m_Clumps) {
 		free(m_Clump.m_ModelVerts);
 		free(m_Clump.m_ModelIndices);

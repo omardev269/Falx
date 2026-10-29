@@ -21,13 +21,14 @@ namespace falx {
         void UpdateClump(ClumpID, uint16*, ulargeint) override {}
         void DismissClump(ClumpID& aClump) override { aClump = { 0, 0 }; }
         void DismissObject(ObjectID) override {}
+		void AlbedoRenderExcept(ObjectID, matrix4x4) override {}
         void AlbedoRender(ClumpID, matrix4x4) override {}
         void AlbedoRender(ObjectID, matrix4x4) override {}
         void AlbedoRender(matrix4x4) override {}
         void Dismiss() override {}
+		IGraphicsDevice* GetParent() override { return NULL; }
     };
 }
-
 void falx::CreateGraphicsScene(IGraphicsScene*& oiGraphicsScene, IGraphicsDevice* aiGraphicsDevice)
 {
     FLX_SMART_CHECK(aiGraphicsDevice != NULL, "Invalid graphics device for scene creation");

@@ -43,6 +43,9 @@
     <Filter Include="core\material\d3d11">
       <UniqueIdentifier>{bdf6da68-ed9e-4f42-aee5-bcd1d5b00bbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="autonomousanimator">
+      <UniqueIdentifier>{90a56e88-87cd-4d03-b3ed-b1a817bf8a91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\device.cpp">
@@ -74,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="src\convenientObjectLoader.cpp">
       <Filter>core\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="animator.cpp">
+      <Filter>autonomousanimator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="src\d3d11material.h">
       <Filter>core\material\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\graphics\animator.h">
+      <Filter>autonomousanimator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

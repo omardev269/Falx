@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\atest.cpp" />
     <ClCompile Include="src\game.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
